@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Заголовок с хлебными крошками -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'product:index' %}" class="text-decoration-none">Главная</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Все категории</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center mb-3">Категории товаров</h1>
+            <p class="text-muted text-center">Выберите интересующую вас категорию</p>
+        </div>
+    </div>
+
+
+    <!-- Список категорий -->
+    <div class="row">
+        <div class="col-12">
+            {% if all_categories %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="categoriesGrid">
+                {% for category in all_categories %}
+                <div class="col category-item" data-name="{{ category.name|lower }}"
+                     data-has-image="{% if category.image %}true{% else %}false{% endif %}">
+                    <div class="card category-card h-100 border-0 shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                {% if category.image %}
+                                <div class="category-image me-4">
+                                    <img src="{{ category.image.url }}" alt="{{ category.name }}"
+                                         class="rounded-3 object-fit-cover" width="80" height="80">
+                                </div>
+                                {% else %}
+                                <div class="category-placeholder me-4">
+                                    <div class="bg-light rounded-3 d-flex align-items-center justify-content-center"
+                                         style="width: 80px; height: 80px;">
+                                        <i class="fas fa-folder-open fa-2x text-muted"></i>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-2">
+                                        <a href="{% url 'product:category_detail' category.slug %}"
+                                           class="text-decoration-none text-dark stretched-link">
+                                            {{ category.name }}
+                                        </a>
+                                    </h5>
+
+                                    <div class="d-flex align-items-center text-muted small">
+                                        <i class="fas fa-box me-1"></i>
+                                        <span>{{ category.product_set.count }} товаров</span>
+                                    </div>
+
+                                    {% if category.super_category %}
+                                    <div class="d-flex align-items-center text-muted small mt-1">
+                                        <i class="fas fa-folder me-1"></i>
+                                        <span>Входит в: {{ category.super_category.name }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ category.created_at|date:"d.m.Y" }}
+                                </small>
+
+                                <span class="badge {% if category.is_supercategory %}bg-warning{% else %}bg-primary{% endif %}">
+                                    {% if category.is_supercategory %}Надкатегория{% else %}Подкатегория{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Состояние пустого списка -->
+            <div class="text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                    <h4 class="text-muted">Категории не найдены</h4>
+                    <p class="text-muted">Пока нет ни одной категории товаров</p>
+                    {% if user.is_staff %}
+                    <a href="{% url 'admin:product_category_add' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-2"></i>Добавить категорию
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .hover-shadow {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .hover-shadow:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .category-image img {
+        transition: transform 0.3s ease;
+    }
+
+    .category-card:hover .category-image img {
+        transform: scale(1.05);
+    }
+
+    .stretched-link::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: auto;
+        content: "";
+        background-color: rgba(0,0,0,0);
+    }
+
+    .empty-state {
+        opacity: 0.7;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+
+

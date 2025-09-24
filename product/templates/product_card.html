@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <!-- Карточка товара -->
+            <div class="card product-detail-card border-0 shadow">
+                <div class="row g-0">
+                    <!-- Изображение -->
+                    <div class="col-md-6">
+                        <div class="h-100 d-flex align-items-center justify-content-center bg-light p-3">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 class="img-fluid object-fit-contain"
+                                 alt="{{ product.title }}"
+                                 style="max-height: 400px;">
+                            {% else %}
+                            <i class="fas fa-image fa-4x text-muted"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Информация -->
+                    <div class="col-md-6">
+                        <div class="card-body h-100 d-flex flex-column">
+                            <h1 class="h4 card-title">{{ product.title }}</h1>
+                            <p class="text-muted">{{ product.category.name }}</p>
+
+                            <div class="mb-3">
+                                <span class="h3 text-primary">{{ product.price }} ₽</span>
+                                {% if product.quantity > 0 %}
+                                <span class="badge bg-success ms-2">В наличии</span>
+                                {% else %}
+                                <span class="badge bg-danger ms-2">Нет в наличии</span>
+                                {% endif %}
+                            </div>
+
+<!--                            <p class="card-text flex-grow-1">{{ product.content }}</p>-->
+
+                            <!-- Общая информация (замена блока основных характеристик) -->
+                            <div class="general-info mb-3">
+                                <h6 class="fw-bold">Общая информация:</h6>
+                                <div class="row">
+                                    <div class="col-6 mb-2">
+                                        <small class="text-muted">Артикул:</small>
+                                        <br>
+                                        <strong>{{ product.sku }}</strong>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <small class="text-muted">Категория:</small>
+                                        <br>
+                                        <strong>{{ product.category.name }}</strong>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <small class="text-muted">Наличие:</small>
+                                        <br>
+                                        <strong>
+                                            {% if product.quantity > 0 %}
+                                            {{ product.quantity }} шт.
+                                            {% else %}
+                                            Нет в наличии
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <small class="text-muted">Дата добавления:</small>
+                                        <br>
+                                        <strong>{{ product.created_at|date:"d.m.Y" }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-auto">
+                                {% if product.quantity > 0 %}
+                                <button class="btn btn-primary btn-lg">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    Добавить в корзину
+                                </button>
+                                {% else %}
+                                <button class="btn btn-outline-secondary btn-lg" disabled>
+                                    <i class="fas fa-times me-2"></i>
+                                    Нет в наличии
+                                </button>
+                                {% endif %}
+                                <button class="btn btn-outline-secondary">
+                                    <i class="far fa-heart me-2"></i>
+                                    В избранное
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок с описаниями -->
+            {% if descriptions_data %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Подробное описание</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for description_type, items in descriptions_data.items %}
+                            <div class="description-section mb-4">
+                                <h6 class="fw-bold text-primary">{{ description_type }}</h6>
+
+                                {% if items|length > 1 %}
+                                <ul class="list-unstyled">
+                                    {% for item in items %}
+                                    <li class="mb-2">
+                                        <i class="fas fa-check text-success me-2"></i>
+                                        {{ item }}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                <p class="mb-0">{{ items.0 }}</p>
+                                {% endif %}
+                            </div>
+                            {% if not forloop.last %}<hr>{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Технические характеристики -->
+            {% if product.dynamic_descriptions.all %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Технические характеристики</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        {% for spec in product.dynamic_descriptions.all %}
+                                        <tr>
+                                            <td class="text-muted" style="width: 40%;">
+                                                <strong>{{ spec.field.name }}</strong>
+                                            </td>
+                                            <td>
+                                                {{ spec.value }}{% if spec.field.options %} {{ spec.field.options }}{% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Галерея дополнительных изображений -->
+            {% if product.additionalimage_set.all %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Галерея товара</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-2">
+                                {% for image in product.additionalimage_set.all %}
+                                <div class="col-4 col-md-3">
+                                    <img src="{{ image.image.url }}"
+                                         class="img-thumbnail cursor-pointer"
+                                         alt="Изображение {{ forloop.counter }}"
+                                         style="height: 80px; object-fit: cover;"
+                                         onclick="openImageModal('{{ image.image.url }}')">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для изображений -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Просмотр изображения</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.product-detail-card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.general-info {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 3px solid #0d6efd;
+}
+
+.description-section {
+    border-left: 3px solid #0d6efd;
+    padding-left: 15px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 110, 253, 0.05);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.cursor-pointer:hover {
+    transform: scale(1.05);
+}
+</style>
+
+<script>
+function openImageModal(imageUrl) {
+    document.getElementById('modalImage').src = imageUrl;
+    new bootstrap.Modal(document.getElementById('imageModal')).show();
+}
+</script>
+{% endblock %}

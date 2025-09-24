@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Заголовок -->
+            <div class="text-center mb-5">
+                <h1 class="fw-bold text-primary">Мой профиль</h1>
+                <p class="text-muted">Управляйте вашей учетной записью и настройками</p>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-transparent py-4 border-bottom">
+                    <h3 class="mb-0">Личный кабинет</h3>
+                </div>
+
+                <div class="card-body p-5">
+                    <!-- Аватар и основная информация -->
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-3 text-center mb-4 mb-md-0">
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}"
+                                 alt="Аватар {{ user.username }}"
+                                 class="rounded-circle img-thumbnail"
+                                 style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto"
+                                 style="width: 120px; height: 120px;">
+                                <i class="fas fa-user fa-2x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <small class="text-muted d-block">Имя пользователя</small>
+                                        <strong class="text-dark fs-5">{{ user.username }}</strong>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <small class="text-muted d-block">Email</small>
+                                        <strong class="text-dark fs-5">{{ user.email|default:"Не указан" }}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <small class="text-muted d-block">Имя и фамилия</small>
+                                        <strong class="text-dark fs-5">
+                                            {% if user.first_name or user.last_name %}
+                                            {{ user.first_name }} {{ user.last_name }}
+                                            {% else %}
+                                            Не указано
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <small class="text-muted d-block">Дата регистрации</small>
+                                        <strong class="text-dark fs-5">{{ user.date_joined|date:"d.m.Y" }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Статистика с рамкой -->
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <div class="border rounded-3 p-4 bg-light">
+                                <h4 class="mb-4 text-center">Статистика</h4>
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center p-3">
+                                            <i class="fas fa-shopping-bag fa-2x text-primary mb-2"></i>
+                                            <h3 class="text-primary mb-1">5</h3>
+                                            <p class="text-muted mb-1">Заказов</p>
+                                            <small class="text-success">+2 за месяц</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center p-3">
+                                            <i class="fas fa-heart fa-2x text-danger mb-2"></i>
+                                            <h3 class="text-danger mb-1">12</h3>
+                                            <p class="text-muted mb-1">В избранном</p>
+                                            <small class="text-success">+3 за месяц</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center p-3">
+                                            <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                                            <h3 class="text-warning mb-1">4.8</h3>
+                                            <p class="text-muted mb-1">Рейтинг</p>
+                                            <small class="text-success">24 отзыва</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 mb-3">
+                                        <div class="text-center p-3">
+                                            <i class="fas fa-car fa-2x text-success mb-2"></i>
+                                            <h3 class="text-success mb-1">{{user.garage.models.count}}</h3>
+                                            <p class="text-muted mb-1">Автомобиля</p>
+                                            <small class="text-success">в гараже</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-grid gap-2 d-md-flex justify-content-center">
+                                <a href="{% url 'account:profile_edit' %}" class="btn btn-primary px-4">
+                                    <i class="fas fa-edit me-2"></i>Редактировать профиль
+                                </a>
+                                <a href="{% url 'account:change_password' %}" class="btn btn-outline-primary px-4">
+                                    <i class="fas fa-lock me-2"></i>Сменить пароль
+                                </a>
+                                <a href="{% url 'garage:garage' %}" class="btn btn-outline-secondary px-4">
+                                    <i class="fas fa-car me-2"></i>Мой гараж
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent py-3 border-top">
+                    <div class="text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Последняя активность: {{ user.last_login|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 15px;
+    }
+
+    .shadow-sm {
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08) !important;
+    }
+
+    .btn {
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .img-thumbnail {
+        border: 3px solid #dee2e6;
+        padding: 3px;
+    }
+
+    .text-muted {
+        color: #6c757d !important;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .fs-5 {
+        font-size: 1.1rem !important;
+    }
+
+    /* Стили для блока статистики с рамкой */
+    .border {
+        border: 1px solid #dee2e6 !important;
+    }
+
+    .rounded-3 {
+        border-radius: 12px !important;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 2rem !important;
+        }
+
+        .d-md-flex {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+        }
+
+        /* Адаптивность для статистики */
+        .border.p-4 {
+            padding: 1.5rem !important;
+        }
+
+        .col-md-3 {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}

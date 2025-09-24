@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Комплекты товаров</h1>
+            </div>
+
+            <!-- Баннер комплектов -->
+            <div class="card bg-primary text-white mb-4 border-0">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="card-title">Выгодные комплекты</h4>
+                            <p class="card-text mb-0">Покупайте готовые наборы со скидкой</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-gift fa-3x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список сетов -->
+    <div class="row">
+        {% for set in sets %}
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <!-- Вся карточка обернута в ссылку -->
+            <a href="{% url 'product:set_detail' set.slug %}" class="text-decoration-none set-card-link">
+                <div class="card set-card h-100 border-0 shadow-sm">
+                    <!-- Бейдж экономии -->
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-danger">Экономия</span>
+                    </div>
+
+                    <!-- Изображение сета -->
+                    <div class="set-image-container">
+                        {% if set.image %}
+                        <img src="{{ set.image.url }}" class="card-img-top set-image" alt="{{ set.name }}">
+                        {% else %}
+                        <div class="set-placeholder d-flex align-items-center justify-content-center">
+                            <i class="fas fa-boxes fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+
+                        <!-- Иконка комплекта -->
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-primary">
+                                <i class="fas fa-gift me-1"></i>
+                                Комплект
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <!-- Название и категория -->
+                        <h5 class="card-title set-title text-dark">
+                            {{ set.name }}
+                        </h5>
+
+                        <!-- Состав комплекта (кратко) -->
+                        <div class="set-composition mb-2">
+                            <small class="text-muted">
+                                {% with products_count=set.set_products.count %}
+                                {{ products_count }} товар{{ products_count|pluralize:"а,ов" }}
+                                {% endwith %}
+                            </small>
+                        </div>
+
+                        <!-- Цена -->
+                        <div class="price-section mb-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="h4 text-primary mb-0">{{ set.get_total_price }} ₽</span>
+                                <span class="h5 text-danger text-decoration-line-through mb-0">
+                                     {{ set.total_price }} ₽
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Статус наличия -->
+                        <div class="availability mb-3">
+                            {% if set.get_quantity > 0 %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>
+                                В наличии: {{ set.get_quantity }}
+                            </span>
+                            {% else %}
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-times me-1"></i>
+                                Нет в наличии
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Кнопки действий -->
+                        <div class="mt-auto">
+                            <div class="d-grid gap-2">
+                                {% if set.get_quantity > 0 %}
+                                <span class="btn btn-primary" onclick="event.stopPropagation();">
+                                    <i class="fas fa-shopping-cart me-2"></i>
+                                    В корзину
+                                </span>
+                                {% else %}
+                                <span class="btn btn-outline-secondary" disabled onclick="event.stopPropagation();">
+                                    <i class="fas fa-bell me-2"></i>
+                                    Уведомить
+                                </span>
+                                {% endif %}
+                                <div class="d-flex gap-2">
+                                    <span class="btn btn-outline-secondary flex-fill"
+                                          onclick="event.stopPropagation();">
+                                        <i class="far fa-heart"></i>
+                                    </span>
+                                    <span class="btn btn-outline-secondary flex-fill"
+                                          onclick="event.stopPropagation();">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-boxes fa-4x text-muted mb-3"></i>
+                <h4>Комплекты не найдены</h4>
+                <p class="text-muted">В данный момент нет доступных комплектов товаров</p>
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Вернуться к товарам
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .set-card-link {
+        display: block;
+        transition: all 0.3s ease;
+    }
+
+    .set-card-link:hover {
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .set-card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        cursor: pointer; /* Курсор указывает на кликабельность */
+    }
+
+    .set-card-link:hover .set-card {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .set-image-container {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+    }
+
+    .set-image {
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .set-card-link:hover .set-image {
+        transform: scale(1.05);
+    }
+
+    .set-placeholder {
+        height: 200px;
+        background-color: #e9ecef;
+    }
+
+    .set-title {
+        font-size: 1.1rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .price-section {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 1rem;
+    }
+
+    .availability {
+        min-height: 30px;
+    }
+
+    /* Стили для предотвращения наследования текстового оформления от ссылки */
+    .set-card .text-dark {
+        color: #212529 !important;
+    }
+
+    .set-card .text-muted {
+        color: #6c757d !important;
+    }
+
+    .set-card .text-primary {
+        color: #0d6efd !important;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .set-image-container {
+            height: 160px;
+        }
+
+        .set-title {
+            font-size: 1rem;
+        }
+
+        .price-section .h4 {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Эффект при наведении на всю карточку */
+    .set-card-link:hover .set-title {
+        color: #0d6efd !important;
+    }
+</style>
+
+<script>
+    // Обработка кликов по кнопкам внутри карточки
+    document.querySelectorAll('.set-card .btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation(); // Предотвращаем всплытие события к родительской ссылке
+            // Здесь будет ваша логика для кнопок (добавление в корзину и т.д.)
+        });
+    });
+</script>
+{% endblock %}
