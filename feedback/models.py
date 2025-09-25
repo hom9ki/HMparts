@@ -14,18 +14,18 @@ class Review(models.Model):
     class Meta:
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
-        uniques_together = ['user', 'product']
+        unique_together = ['user', 'product']
 
     def __str__(self):
         return f'{self.user} - {self.product}'
 
 
 class ProductRating(models.Model):
-    CHOICES_RATING = [('1', '1'),
-                      ('2', '2'),
-                      ('3', '3'),
-                      ('4', '4'),
-                      ('5', '5')]
+    CHOICES_RATING = [(1, '1'),
+                      (2, '2'),
+                      (3, '3'),
+                      (4, '4'),
+                      (5, '5')]
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='ratings', verbose_name='Товар')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='ratings', verbose_name='Пользователь')
@@ -36,7 +36,7 @@ class ProductRating(models.Model):
     class Meta:
         verbose_name = 'Рейтинг'
         verbose_name_plural = 'Рейтинги'
-        uniques_together = ['user', 'product']
+        unique_together = ['user', 'product']
 
     def __str__(self):
         return f'{self.user} - {self.product} - {self.rating}'
@@ -46,6 +46,7 @@ class ProductRating(models.Model):
             return ProductRating.objects.filter(product=self.product).aggregate(models.Avg('rating'))['rating__avg']
         else:
             return 0
+
 
 class Question(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name='Пользователь',
@@ -75,7 +76,15 @@ class Answer(models.Model):
     class Meta:
         verbose_name = 'Ответ'
         verbose_name_plural = 'Ответы'
-        uniques_together = ['user', 'question']
+        unique_together = ['user', 'question']
 
     def __str__(self):
         return f'{self.question} - {self.user}'
+
+    def save(self, *args, **kwargs):
+        if not self.question.is_answered:
+            self.question.is_answered = True
+            self.question.save()
+        super().save(*args, **kwargs)
+
+
