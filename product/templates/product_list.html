@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}Товары категории {{ subcategory.name }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+
+
+        <!-- Сетка товаров -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            {% for product in products %}
+            <div class="col">
+                <div class="card h-100 shadow-sm position-relative">
+                    <!-- Ссылка на товар -->
+                    <a href="{% url 'product:product_card' product.slug %}" class="stretched-link"></a>
+
+                    <!-- Изображение товара -->
+                    <div class="product-image-container" style="height: 200px; overflow: hidden;">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}"
+                             class="card-img-top h-100 object-fit-cover"
+                             alt="{{ product.title }}"
+                             loading="lazy">
+                        {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
+                            <i class="fas fa-image fa-2x"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Тело карточки -->
+                    <div class="card-body">
+                        <h6 class="card-title text-dark mb-2">
+                            {{ product.title|truncatewords:4 }}
+                        </h6>
+
+                        {% if product.content %}
+                        <p class="card-text text-muted small mb-2">
+                            {{ product.content|truncatewords:8 }}
+                        </p>
+                        {% endif %}
+
+                        <!-- Цена и рейтинг -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-primary fw-bold">{{ product.price }} ₽</span>
+                            <small class="text-muted">
+                                <i class="fas fa-star text-warning"></i>
+                                4.8
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Футер карточки -->
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <small class="text-muted">
+                            <i class="fas fa-box me-1"></i>
+                            В наличии: {{ product.quantity }} шт.
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                    <h3>Товары не найдены</h3>
+                    <p class="text-muted">В этой категории пока нет товаров</p>
+                    <a href="{% url 'product:index' %}" class="btn btn-primary">Вернуться в каталог</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        {% if products.has_other_pages %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if products.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.previous_page_number }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in products.paginator.page_range %}
+                <li class="page-item {% if products.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if products.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.next_page_number }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        <!-- Описание категории в footer -->
+        {% if subcategory.description %}
+        <div class="mt-5 pt-4 border-top">
+            <h3 class="h5">О категории {{ subcategory.name }}</h3>
+            <p class="text-muted">{{ subcategory.description }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-image-container {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover .product-image-container {
+        transform: scale(1.05);
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+</style>
+{% endblock %}

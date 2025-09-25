@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мой гараж - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Заголовок -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h1 class="fw-bold">Мой гараж</h1>
+                    <p class="text-muted">Управляйте вашими автомобилями</p>
+                </div>
+                <a href="{% url 'garage:add_car' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Добавить автомобиль
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% for garage in garage %}
+    <!-- Статистика гаража -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-car fa-2x text-primary mb-2"></i>
+                    <h3 class="text-primary">{{ garage.models.count }}</h3>
+                    <p class="text-muted mb-0">Всего автомобилей</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной автомобиль -->
+    {% with main_car=garage.user_car.filter.is_main|first %}
+    {% if main_car %}
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-primary shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star me-2"></i>Основной автомобиль
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                            {% if main_car.car_model.image %}
+                            <img src="{{ main_car.car_model.image.url }}"
+                                 alt="{{ main_car.car_model.brand.name }} {{ main_car.car_model.name }}"
+                                 class="img-fluid rounded"
+                                 style="max-height: 120px; object-fit: cover;">
+                            {% else %}
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                 style="width: 120px; height: 120px;">
+                                <i class="fas fa-car fa-2x text-muted"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="mb-2">{{ main_car.car_model.brand.name }} {{ main_car.car_model.name }}</h4>
+                            <p class="text-muted mb-0">Основной автомобиль в гараже</p>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-check me-1"></i>Основной
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Список автомобилей -->
+    <div class="row">
+        {% for user_car in garage.garage.all %}
+        {% if not user_car.is_main or not main_car %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-secondary">
+                            <i class="fas fa-car me-1"></i>Автомобиль
+                        </span>
+                        {% if user_car.is_main %}
+                        <span class="badge bg-warning">
+                            <i class="fas fa-star me-1"></i>Основной
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Изображение автомобиля -->
+                    <div class="text-center mb-3">
+                        {% if user_car.car_model.image %}
+                        <img src="{{ user_car.car_model.image.url }}"
+                             alt="{{ user_car.car_model.brand.name }} {{ user_car.car_model.name }}"
+                             class="img-fluid rounded"
+                             style="max-height: 180px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                             style="height: 180px;">
+                            <i class="fas fa-car fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Информация об автомобиле -->
+                    <h5 class="card-title text-center mb-3">
+                        {{ user_car.car_model.brand.name }} {{ user_car.car_model.name }}
+                    </h5>
+
+                    <div class="car-details">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Статус:</span>
+                            <span class="badge {% if user_car.is_main %}bg-warning{% else %}bg-secondary{% endif %}">
+                                {% if user_car.is_main %}Основной{% else %}Дополнительный{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="card-footer bg-transparent">
+                    <div class="d-grid gap-2">
+                        {% if not user_car.is_main %}
+                        <form method="post" action="#">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-star me-1"></i>Сделать основным
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <form method="post" action="{% url 'garage:delete_car' user_car.id %}"
+                              onsubmit="return confirm('Удалить этот автомобиль из гаража?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash me-1"></i>Удалить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-garage fa-4x text-muted mb-3"></i>
+                <h3>Гараж пуст</h3>
+                <p class="text-muted">Добавьте ваш первый автомобиль</p>
+                <a href="{% url 'garage:add_car' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Добавить автомобиль
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    }
+
+    .car-details {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .btn {
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .img-fluid.rounded {
+        border-radius: 10px !important;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem !important;
+        }
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

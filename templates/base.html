@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AutoParts - Магазин автотоваров{% endblock %}</title>
+
+
+    <link rel="stylesheet" href="{% static 'master.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product_card.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block extra_css %}{% endblock %}
+
+
+</head>
+<body>
+<!-- Header -->
+<header class="bg-dark">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <!-- Логотип -->
+                <a class="navbar-brand" href="{% url 'product:index' %}">
+                    <i class="fas fa-car me-2"></i>
+                    HMParts
+                </a>
+
+                <!-- Кнопка для мобильных -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Основное меню -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle"
+                                    id="categoriesDropdown"
+                                    role="button"
+                                    data-bs-toggle="dropdown"
+                                    onclick="window.location.href='{% url 'product:category_all' %}'">
+                                Категории
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% for super_category, sub_categories in categories.items %}
+                                {% if super_category %}
+                                <li class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle"
+                                       href="{% url 'product:subcategory' super_category.slug %}">{{super_category.name}}</a>
+                                    <ul class="dropdown-menu">
+                                        {% for category in sub_categories %}
+                                        <li><a class="dropdown-item" href="{% url 'product:category' category.slug %}">{{category.name}}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                                {% else %}
+                                {% for category in sub_categories %}
+                                <li><a class="dropdown-item" href="{% url 'product:category' category.slug %}">{{category.name}}</a>
+                                </li>
+                                {% endfor %}
+                                {% endif %}
+                                {%empty%}
+                                <li><a class="dropdown-item" href="#">Нет категорий</a></li>
+                                {% endfor %}
+                                <hr class="dropdown-divider">
+                                <li><a class="dropdown-item text-primary" href="{% url 'product:product_list' %}">Все
+                                    товары</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'product:set_all'%}">Комплекты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Хиты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Доставка</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Контакты</a>
+                        </li>
+
+                        {% if user.is_superuser %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-warning" href="#" id="adminDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog me-1"></i> Админ-панель
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><h6 class="dropdown-header">Быстрые действия</h6></li>
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">
+                                    <i class="fas fa-tachometer-alt me-2 text-info"></i>Админ-панель
+                                </a></li>
+                            </ul>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    <!-- Поисковая строка -->
+                    <form class="d-flex me-3" method="get" action="{% url 'product:search' %}"
+                          style="min-width: 300px;">
+                        <div class="input-group">
+                            <input type="text"
+                                   name="q"
+                                   class="form-control"
+                                   placeholder="Поиск товаров и комплектов..."
+                                   aria-label="Поиск"
+                                   value="{{ request.GET.q }}">
+                            <button class="btn btn-outline-light" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Поиск и действия пользователя -->
+                    <div class="d-flex align-items-center">
+                        <!-- Кнопка Корзина -->
+                        <a href="#" class="btn btn-outline-light me-3 position-relative">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Корзина
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                                5
+                            </span>
+                        </a>
+
+                        <!-- Выпадающее меню Личный кабинет -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-2"></i>
+                                {% if user.is_authenticated %}
+                                {% if user.first_name %}
+                                {{ user.first_name }}
+                                {% else %}
+                                {{ user.username }}
+                                {% endif %}
+                                {% else %}
+                                Аккаунт
+                                {% endif %}
+                            </button>
+                            {% if user.is_authenticated %}
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'account:profile' %}"><i
+                                        class="fas fa-user-circle me-2"></i>Профиль</a>
+                                </li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Заказы</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-heart me-2"></i>Избранное</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form method="post" action="{% url 'account:logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Выйти
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                            {% else %}
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'account:login' %}"><i
+                                        class="fas fa-user-circle me-2"></i>Войти</a></li>
+                                <li><a class="dropdown-item" href="{% url 'account:register' %}"><i
+                                        class="fas fa-user-plus me-2"></i>Регистрация</a></li>
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
+                                <i class="fas fa-bars me-2"></i>
+                                Гараж
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'garage:garage' %}">Мой гараж</a></li>
+                                <li><a class="dropdown-item" href="#">Добавить авто</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<!-- Основное содержимое -->
+<main>
+    {% block content %}
+    <!-- Содержимое будет в дочерних шаблонах -->
+    {% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <!-- Информация о магазине -->
+            <div class="col-md-4 mb-4">
+                <h5 class="mb-3">HMParts</h5>
+                <p class="text-muted">Магазин качественных автотоваров и запчастей. Все для вашего автомобиля.</p>
+                <div class="social-links">
+                    <a href="#" class="text-white me-3"><i class="fab fa-vk fa-lg"></i></a>
+                    <a href="#" class="text-white me-3"><i class="fab fa-telegram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-youtube fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Категории -->
+            <div class="col-md-2 mb-4">
+                <h6 class="mb-3">Категории</h6>
+                <ul class="list">
+                    {% for category in categories %}
+                    {% ifchanged category.super_category.pk %}
+                    <li><a class="dropdown-item" href="#">{{ category.super_category.name }}</a></li>
+                    {% endifchanged %}
+                    <li><a class="dropdown-item" href="#">{{ category.name }}</a></li>
+                    {% endfor %}
+
+                </ul>
+            </div>
+
+            <!-- Клиентам -->
+            <div class="col-md-2 mb-4">
+                <h6 class="mb-3">Клиентам</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-muted text-decoration-none">Доставка</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Оплата</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Гарантия</a></li>
+                    <li><a href="#" class="text-muted text-decoration-none">Возврат</a></li>
+                </ul>
+            </div>
+
+            <!-- Контакты -->
+            <div class="col-md-4 mb-4">
+                <h6 class="mb-3">Контакты</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-phone me-2"></i>
+                        <span class="text-muted">+7 (999) 123-45-67</span>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <span class="text-muted">info@autoparts.ru</span>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span class="text-muted">г. Москва, ул. Автозапчастей, 123</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-clock me-2"></i>
+                        <span class="text-muted">Пн-Пт: 9:00-21:00, Сб-Вс: 10:00-20:00</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4 bg-secondary">
+
+        <!-- Копирайт -->
+        <div class="row">
+            <div class="col-md-6">
+                <p class="text-muted mb-0">&copy; 2024 AutoParts. Все права защищены.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="#" class="text-muted text-decoration-none me-3">Политика конфиденциальности</a>
+                <a href="#" class="text-muted text-decoration-none">Пользовательское соглашение</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap 5 JS -->
+<script src="{% static 'main.js' %}"></script>
+
+{% block extra_js %}{% endblock %}
+</body>
+<style>
+    @media (max-width: 992px) {
+        .navbar-collapse .d-flex {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .navbar-collapse .d-flex form {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .navbar-collapse .d-flex .btn {
+            margin: 5px 0;
+        }
+    }
+
+    /* Для мобильных устройств */
+    @media (max-width: 768px) {
+        .navbar-collapse .d-flex form {
+            min-width: auto;
+        }
+
+        .input-group {
+            width: 100%;
+        }
+    }
+</style>
+</html>

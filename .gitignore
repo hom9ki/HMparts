@@ -1,7 +1,19 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
+=======
+>>>>>>> master
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.lock-wscript
+.npm
+.node_repl_history
 
 # C extensions
 *.so
@@ -71,6 +83,7 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+<<<<<<< HEAD
 # PyBuilder
 .pybuilder/
 target/
@@ -158,3 +171,6 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+=======
+
+>>>>>>> master
