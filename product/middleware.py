@@ -1,4 +1,5 @@
 from .models import SubCategory
+from garage.models import UserCar
 from collections import defaultdict
 
 
@@ -13,5 +14,8 @@ def sc_context_processor(request):
         elif not sub_category.is_supercategory:
             grouped_categories[None].append(sub_category)
 
-    context = {'categories': dict(grouped_categories)}
+    base_auto = UserCar.objects.filter(is_main=True).first()
+
+    context = {'categories': dict(grouped_categories),
+               'base_auto': base_auto}
     return context

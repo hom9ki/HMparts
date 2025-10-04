@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from .utilities import get_image_filename_category, get_image_filename_product, get_image_filename_set
-
+from garage.models import Model
 
 
 class CategoryManager(models.Manager):
@@ -115,6 +115,19 @@ class AdditionalImage(models.Model):
     class Meta:
         verbose_name = 'Дополнительное изображение'
         verbose_name_plural = 'Дополнительные изображения'
+
+
+class ProductApplicability(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, verbose_name='Товар',
+                                   related_name='applicability')
+    model = models.ManyToManyField(Model, verbose_name='Модель', related_name='applicability_products')
+
+    class Meta:
+        verbose_name = 'Применяемость'
+        verbose_name_plural = 'Применяемость'
+
+    def __str__(self):
+        return f'Применяемость для {self.product.title}'
 
 
 class HitBase(models.Model):

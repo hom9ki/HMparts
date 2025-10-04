@@ -21,6 +21,9 @@ def get_image_filename_product(instance, filename):
 def get_image_filename_set(instance, filename):
     return get_image_filename(instance, filename, 'set')
 
+def get_image_filename_model_car(instance, filename):
+    return get_image_filename(instance, filename, 'model_car')
+
 
 
 

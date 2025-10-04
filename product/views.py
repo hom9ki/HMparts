@@ -1,11 +1,17 @@
 from itertools import chain
 
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Avg, Exists, OuterRef
 from django.shortcuts import render, get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from garage.models import Garage
 from .models import HitProduct, Product, SuperCategory, SubCategory, Category, Set, HitSet
+from feedback.models import Review
 from .middleware import sc_context_processor
 from .utillities.search import search
+from .serializers import ProductDescriptionSerializer, SetSerializer, ReviewSerializer, QuestionSerializer
 
 
 def index(request):
@@ -23,16 +29,32 @@ def supercategory(request):
 
 
 def product_card(request, slug):
-    product = Product.objects.select_related('category').prefetch_related('dynamic_descriptions', 'descriptions',
-                                                                          'additionalimage_set').get(slug=slug)
-    descriptions_data = {}
-    for info in product.descriptions.all():
-        if info.description_type not in descriptions_data:
-            descriptions_data[info.description_type] = []
-        items = info.content.split('-')
-        descriptions_data[info.description_type].extend([item.strip() for item in items if item.strip()])
+    product = Product.objects.select_related('category').prefetch_related('descriptions',
+                                                                          'reviews',
+                                                                          'questions',
+                                                                          'additionalimage_set',
+                                                                          'applicability__model').get(slug=slug)
+    main_avto = Garage.objects.get(user=request.user)
+
+    has_descriptions = product.descriptions.all().exists()
+    has_reviews = product.reviews.all().exists()
+    has_questions = product.questions.all().exists()
+    has_set = product.sets.all().exists()
+    applicability = [apply.name for apply in product.applicability.model.all()]
+    user_cars = [a.car_model.name for a in main_avto.garage.all() if a.is_main]
+    has_common = any(model in applicability for model in user_cars)
+    print(applicability, user_cars, has_common)
+    if has_common:
+        main_avto = ''.join(user_cars)
+    else:
+        main_avto = None
     return render(request, 'product_card.html', {'product': product,
-                                                 'descriptions_data': descriptions_data})
+                                                 'has_descriptions': has_descriptions,
+                                                 'has_reviews': has_reviews,
+                                                 'has_questions': has_questions,
+                                                 'has_set': has_set,
+                                                 'has_common': has_common,
+                                                 'main_avto': main_avto})
 
 
 def subcategory(request, slug):
@@ -85,6 +107,7 @@ def search_product_set(request):
     return render(request, 'search.html', {'results': results,
                                            'query': query, })
 
+
 def product_list(request):
     objects = Product.objects.all().order_by('title')
     p = Paginator(objects, 12)
@@ -92,3 +115,31 @@ def product_list(request):
     content = p.get_page(page)
 
     return render(request, 'product_list.html', {'products': content})
+
+
+@api_view()
+def product_api(request, slug, action):
+    product = get_object_or_404(Product, slug=slug)
+    print(product, action)
+    if action == 'descriptions':
+        queryset = product.descriptions.filter(product=product)
+        serializer = ProductDescriptionSerializer(queryset, many=True)
+    elif action == 'reviews':
+        reviews = Review.objects.filter(product=product).select_related('user')
+        serializer = ReviewSerializer(reviews, many=True)
+    elif action == 'questions':
+        questions = product.questions.select_related('user').prefetch_related('answers__user')
+        serializer = QuestionSerializer(questions, many=True)
+    elif action == 'set':
+        sets = product.sets.all()
+        serializer = SetSerializer(sets, many=True)
+
+    else:
+        return Response({'error': 'Invalid action'}, status=400)
+
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_review(request, slug):
+    print(request.data)

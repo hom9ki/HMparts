@@ -15,5 +15,8 @@ urlpatterns = [
     path('category/', views.category, name='category_all'),
     path('sets/', views.set_all, name='set_all'),
     path('set/<slug:slug>/', views.set_detail, name='set_detail'),
-    path('search/', views.search_product_set, name='search')
+    path('search/', views.search_product_set, name='search'),
+
+    path('api/product/<slug:slug>/<str:action>/', views.product_api, name='product_api'),
+    # path('api/review/<slug:slug>/', views.add_review, name='add_review'),
 ]

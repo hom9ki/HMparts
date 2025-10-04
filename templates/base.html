@@ -8,8 +8,8 @@
 
 
     <link rel="stylesheet" href="{% static 'master.css' %}">
-    <link rel="stylesheet" href="{% static 'css/product_card.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product_card.css' %}">
 
     {% block extra_css %}{% endblock %}
 
@@ -173,8 +173,15 @@
                         <div class="dropdown">
                             <button class="btn btn-outline-light dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
-                                <i class="fas fa-bars me-2"></i>
+                                {% if user.is_authenticated %}
+                                {% if base_auto %}
+                                <i class="fas fa-car me-1"></i>{{base_auto.car_model}}
+                                {% else %}
                                 Гараж
+                                {% endif %}
+                                {% else %}
+                                Гараж
+                                {% endif %}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="{% url 'garage:garage' %}">Мой гараж</a></li>

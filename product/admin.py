@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import SubCategory, SuperCategory, Product, AdditionalImage, HitProduct, SetProduct, Set, HitSet, HitBase
-from .models import ProductDescription, DynamicDescriptionField, ProductDynamicDescription
-from .forms import SubCategoryForm
+from .models import ProductDescription, DynamicDescriptionField, ProductDynamicDescription, ProductApplicability
+from .forms import SubCategoryForm, ProductApplicabilityFormAdmin
 
 
 class SubCategoryInline(admin.TabularInline):
@@ -33,32 +33,47 @@ class SubCategoryAdmin(admin.ModelAdmin):
 class AdditionalImageInline(admin.TabularInline):
     model = AdditionalImage
 
+
 @admin.register(ProductDescription)
 class ProductDescriptionAdmin(admin.ModelAdmin):
     list_display = ('product', 'description_type')
+
     class Meta:
         model = ProductDescription
+
 
 @admin.register(DynamicDescriptionField)
 class DynamicDescriptionFieldAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
     class Meta:
         model = DynamicDescriptionField
+
 
 @admin.register(ProductDynamicDescription)
 class ProductDynamicDescriptionAdmin(admin.ModelAdmin):
     list_display = ('product', 'field', 'value')
     search_fields = ('product__title',)
+
     class Meta:
         model = ProductDynamicDescription
 
+
 class ProductDescriptionInline(admin.TabularInline):
-        model = ProductDescription
-        extra = 1
+    model = ProductDescription
+    extra = 1
+
 
 class ProductDynamicDescriptionInline(admin.TabularInline):
     model = ProductDynamicDescription
     extra = 1
+
+
+class ProductApplicabilityInline(admin.TabularInline):
+    model = ProductApplicability
+    form = ProductApplicabilityFormAdmin
+    extra = 1
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -68,7 +83,8 @@ class ProductAdmin(admin.ModelAdmin):
     fields = (('category', 'title', 'slug'), 'content', 'price', 'image', 'quantity', 'created_at')
     list_filter = ('category',)
     exclude = ('author',)
-    inlines = (AdditionalImageInline, ProductDescriptionInline, ProductDynamicDescriptionInline)
+    inlines = (AdditionalImageInline, ProductDescriptionInline, ProductDynamicDescriptionInline,
+               ProductApplicabilityInline)
     readonly_fields = ['created_at']
 
     def save_model(self, request, obj, form, change):
@@ -95,16 +111,16 @@ class HitProductAdmin(admin.ModelAdmin):
     class Meta:
         model = HitProduct
 
+
 @admin.register(HitSet)
 class HitSetAdmin(admin.ModelAdmin):
     fields = ('set_object', 'created_at')
     list_display = ('set_object', 'created_at')
     search_fields = ('set_object',)
     readonly_fields = ['created_at']
+
     class Meta:
         model = HitSet
-
-
 
 
 class SetProductInline(admin.TabularInline):
@@ -119,3 +135,7 @@ class SetAdmin(admin.ModelAdmin):
     fields = ['name', 'slug', 'description', 'image', 'total_price', 'discount']
 
 
+@admin.register(ProductApplicability)
+class ProductApplicabilityAdmin(admin.ModelAdmin):
+    form = ProductApplicabilityFormAdmin
+    list_filter = ('product',)

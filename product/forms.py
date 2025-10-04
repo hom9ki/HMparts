@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import SubCategory, Category
+from .models import SubCategory, Category, ProductApplicability
 
 
 class SubCategoryForm(forms.ModelForm):
@@ -13,3 +13,11 @@ class SubCategoryForm(forms.ModelForm):
     class Meta:
         model = SubCategory
         fields = ('super_category', 'name', 'slug')
+
+
+
+class ProductApplicabilityFormAdmin(forms.ModelForm):
+    class Meta:
+        model = ProductApplicability
+        fields = '__all__'
+        widgets = {'model': forms.CheckboxSelectMultiple}
