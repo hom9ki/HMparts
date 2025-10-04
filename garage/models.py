@@ -1,6 +1,7 @@
 from django.db import models
 
 from users.models import CustomUser
+from product.utilities import get_image_filename_model_car
 
 
 class Brand(models.Model):
@@ -18,7 +19,8 @@ class Brand(models.Model):
 class Model(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Марка автомобиля')
     name = models.CharField(max_length=50, verbose_name='Модель автомобиля')
-    image = models.ImageField(upload_to='models/', blank=True, null=True, verbose_name='Изображение модели')
+    image = models.ImageField(upload_to=get_image_filename_model_car, blank=True, null=True,
+                              verbose_name='Изображение модели')
 
     class Meta:
         verbose_name = 'Модель автомобиля'
@@ -36,15 +38,18 @@ class Garage(models.Model):
     class Meta:
         verbose_name = 'Гараж'
         verbose_name_plural = 'Гаражи'
+
     def __str__(self):
         if self.user.first_name:
             return f'{self.user.first_name} {self.user.last_name}'
         else:
             return f'{self.user.username}'
 
+
 class UserCar(models.Model):
     garage = models.ForeignKey(Garage, on_delete=models.CASCADE, verbose_name='Гараж', related_name='garage')
-    car_model = models.ForeignKey(Model, on_delete=models.CASCADE, verbose_name='Модель автомобиля')
+    car_model = models.ForeignKey(Model, on_delete=models.CASCADE, verbose_name='Модель автомобиля',
+                                  related_name='model')
     is_main = models.BooleanField(default=False, verbose_name='Основной автомобиль')
 
     class Meta:
