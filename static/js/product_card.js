@@ -369,7 +369,7 @@ function displayReviews(container, data) {
                                 <div class="user-details">
                                     <h6 class="mb-1 fw-bold text-dark">${userName}</h6>
                                     <div class="rating-small text-warning">
-                                        ${generateStarRating(review.rating)}
+                                        ${generateStarRating(review.get_avg_rating)}
                                     </div>
                                 </div>
                             </div>
@@ -496,6 +496,248 @@ function displayReviewFormOnly(container) {
 
     // Инициализируем обработчики для формы
     initializeReviewForm(productSlug);
+}
+
+// НОВАЯ ФУНКЦИЯ: Отображение вопросов и ответов
+function displayQuestions(container, data) {
+    let html = '<div class="questions-content">';
+
+    // Добавляем форму для вопроса
+    html += `
+        <div class="question-form-card mb-5">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle me-2"></i>
+                        Задать вопрос о товаре
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="add-question-form">
+                        <div class="mb-3">
+                            <label for="question-text" class="form-label">Ваш вопрос</label>
+                            <textarea class="form-control" id="question-text" name="text"
+                                      rows="3" placeholder="Задайте вопрос о товаре..."
+                                      required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Ваш вопрос будет опубликован после проверки
+                            </small>
+                            <button type="submit" class="btn btn-info" id="submit-question-btn">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Задать вопрос
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="mb-4">
+            <i class="fas fa-comments me-2"></i>
+            Вопросы и ответы (${data.length})
+        </h5>
+    `;
+
+    if (data.length === 0) {
+        html += `
+            <div class="text-center py-5">
+                <i class="fas fa-question-circle fa-3x text-muted mb-3"></i>
+                <p class="text-muted fs-5">Пока нет вопросов</p>
+                <p class="text-muted">Будьте первым, кто задаст вопрос об этом товаре!</p>
+            </div>
+        `;
+    } else {
+        data.forEach((qa, index) => {
+            const questionDate = qa.created_at ? new Date(qa.created_at).toLocaleDateString('ru-RU') : '';
+            const userName = qa.user_name || 'Анонимный пользователь';
+
+            html += `
+                <div class="qa-item card mb-4 border-0 shadow-sm animate__animated animate__fadeInUp"
+                     style="animation-delay: ${index * 0.1}s;">
+                    <div class="card-body">
+                        <!-- Вопрос -->
+                        <div class="question mb-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="question-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-question"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong class="d-block text-dark">${userName}</strong>
+                                            <small class="text-muted">
+                                                <i class="far fa-calendar me-1"></i>
+                                                ${questionDate}
+                                            </small>
+                                        </div>
+                                        <span class="badge ${qa.is_answered ? 'bg-success' : 'bg-warning'}">
+                                            ${qa.is_answered ? '✓ Отвечено' : '⏳ Ожидает ответа'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question-text bg-light p-3 rounded position-relative">
+                                <div class="quote-icon text-primary opacity-25 position-absolute top-0 start-0 mt-2 ms-2">
+                                    <i class="fas fa-quote-left"></i>
+                                </div>
+                                <p class="mb-0 lh-lg ps-4">${formatText(qa.text)}</p>
+                            </div>
+                        </div>
+
+                        <!-- Ответы -->
+                        ${qa.answers && qa.answers.length > 0 ? `
+                            <div class="answers-section">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-reply me-2"></i>
+                                    Ответы (${qa.answers.length})
+                                </h6>
+                                ${qa.answers.map((answer, answerIndex) => {
+                                    const answerDate = answer.created_at ? new Date(answer.created_at).toLocaleDateString('ru-RU') : '';
+                                    const answerUserName = answer.user_name || 'Продавец';
+
+                                    return `
+                                        <div class="answer-item mb-3 ${answerIndex !== qa.answers.length - 1 ? 'border-bottom pb-3' : ''}">
+                                            <div class="d-flex align-items-start mb-2">
+                                                <div class="answer-icon bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                                     style="width: 35px; height: 35px;">
+                                                    <i class="fas fa-check"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <strong class="d-block text-success">${answerUserName}</strong>
+                                                    <small class="text-muted">
+                                                        <i class="far fa-calendar me-1"></i>
+                                                        ${answerDate}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <div class="answer-text bg-success bg-opacity-10 p-3 rounded position-relative ms-5">
+                                                <div class="quote-icon text-success opacity-25 position-absolute top-0 start-0 mt-1 ms-2">
+                                                    <i class="fas fa-quote-left"></i>
+                                                </div>
+                                                <p class="mb-0 lh-base ps-3">${formatText(answer.text)}</p>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        ` : qa.is_answered ? `
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Ответ готовится и скоро будет опубликован
+                            </div>
+                        ` : `
+                            <div class="alert alert-warning">
+                                <i class="fas fa-clock me-2"></i>
+                                Ожидает ответа от продавца
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Инициализируем обработчики для формы вопроса
+    initializeQuestionForm();
+
+    // Добавляем анимацию при скролле
+    animateQuestionsOnScroll();
+}
+
+// НОВАЯ ФУНКЦИЯ: Инициализация формы вопроса
+function initializeQuestionForm() {
+    const form = document.getElementById('add-question-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submit-question-btn');
+        const originalText = submitBtn.innerHTML;
+        const productSlug = getProductSlug();
+
+        // Блокируем кнопку
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Отправка...';
+
+        const formData = new FormData(this);
+        const questionData = {
+            text: formData.get('text')
+        };
+
+        try {
+            const response = await fetch(`/api/product/${productSlug}/add-question/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(questionData)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                let errorData;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch {
+                    errorData = { error: errorText };
+                }
+                throw new Error(errorData.error || 'Ошибка при отправке вопроса');
+            }
+
+            const newQuestion = await response.json();
+
+            // Показываем уведомление об успехе
+            showNotification('Вопрос успешно отправлен!', 'success');
+
+            // Очищаем форму
+            form.reset();
+
+            // Перезагружаем вопросы
+            if (lastAction === 'questions' && lastProductSlug) {
+                loadContent('questions', lastProductSlug);
+            }
+
+        } catch (error) {
+            console.error('Ошибка при отправке вопроса:', error);
+            showNotification(error.message || 'Ошибка при отправке вопроса', 'error');
+        } finally {
+            // Разблокируем кнопку
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+}
+
+// НОВАЯ ФУНКЦИЯ: Анимация вопросов при скролле
+function animateQuestionsOnScroll() {
+    const qaItems = document.querySelectorAll('.qa-item');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    qaItems.forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px)';
+        item.style.transition = 'all 0.6s ease';
+        observer.observe(item);
+    });
 }
 
 function generateAvatarSVG(initials, index) {
@@ -730,106 +972,6 @@ function displaySpecifications(container, data) {
     container.innerHTML = html;
 }
 
-function displayQuestions(container, data) {
-    let html = '<div class="questions-content">';
-
-    data.forEach((qa, index) => {
-        const questionDate = qa.created_at ? new Date(qa.created_at).toLocaleDateString('ru-RU') : '';
-        const answerDate = qa.answered_at ? new Date(qa.answered_at).toLocaleDateString('ru-RU') : '';
-        html += `
-            <div class="qa-item ${index !== data.length - 1 ? 'border-bottom pb-3 mb-3' : ''}">
-                <!-- Вопрос -->
-                <div class="question mb-3">
-                    <div class="d-flex align-items-start mb-2">
-                        <i class="fas fa-question-circle text-primary mt-1 me-2"></i>
-                        <div class="flex-grow-1">
-                            <strong class="d-block">Вопрос</strong>
-                            <small class="text-muted">
-                                ${qa.user_name || 'Аноним'} • ${questionDate}
-                            </small>
-                        </div>
-                    </div>
-                    <p class="mb-0 ps-4">${formatText(qa.text)}</p>
-                </div>
-
-                <!-- Ответ -->
-                ${qa.answers && qa.answers.length > 0 && qa.answers[0].text ? `
-                    <div class="answer bg-success bg-opacity-10 p-3 rounded">
-                        <div class="d-flex align-items-start mb-2">
-                            <i class="fas fa-check-circle text-success mt-1 me-2"></i>
-                            <div class="flex-grow-1">
-                                <strong class="d-block text-success">Ответ ${qa.answers[0].user_name}</strong>
-                                ${answerDate ? `<small class="text-muted">${answerDate}</small>` : ''}
-                            </div>
-                        </div>
-                        <p class="mb-0 ps-4">${formatText(qa.answers[0].text)}</p>
-                    </div>
-                ` : `
-                    <div class="alert alert-warning py-2">
-                        <i class="fas fa-clock me-2"></i>
-                        Ожидает ответа от продавца
-                    </div>
-                `}
-            </div>
-        `;
-    });
-
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function displaySet(container, data) {
-    let totalPrice = 0;
-
-    let html = `
-        <div class="set-content">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="60">Кол-во</th>
-                            <th>Наименование</th>
-                            <th width="120" class="text-end">Цена</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    `;
-
-    data.forEach(item => {
-        console.log(item.total_price);
-        const quantity = item.quantity || 1;
-        const price = item.total_price || 0;
-        totalPrice += price * quantity;
-
-        html += `
-            <tr>
-                <td>
-                    <span class="badge bg-primary fs-6">${quantity}</span>
-                </td>
-                <td>
-                    <div>
-                        <strong class="d-block">${item.name || 'Неизвестный элемент'}</strong>
-                        ${item.description ? `<small class="text-muted">${item.description}</small>` : ''}
-                        ${item.sku ? `<div><small class="text-muted">Артикул: ${item.sku}</small></div>` : ''}
-                    </div>
-                </td>
-                <td class="text-end">
-                    ${price > 0 ? `<span class="fw-bold text-primary">${price} ₽</span>` : '<span class="text-muted">—</span>'}
-                </td>
-            </tr>
-        `;
-    });
-
-    html += `
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-
-    container.innerHTML = html;
-}
-
 function generateStarRating(rating) {
     console.log(rating);
     if (!rating || rating === 0) {
@@ -979,3 +1121,55 @@ window.openImageModal = openImageModal;
 window.highlightStars = highlightStars;
 window.resetStars = resetStars;
 window.setRating = setRating;
+
+function displaySet(container, data) {
+    let totalPrice = 0;
+
+    let html = `
+        <div class="set-content">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="60">Кол-во</th>
+                            <th>Наименование</th>
+                            <th width="120" class="text-end">Цена</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+
+    data.forEach(item => {
+        console.log(item.total_price);
+        const quantity = item.quantity || 1;
+        const price = item.total_price || 0;
+        totalPrice += price * quantity;
+
+        html += `
+            <tr>
+                <td>
+                    <span class="badge bg-primary fs-6">${quantity}</span>
+                </td>
+                <td>
+                    <div>
+                        <strong class="d-block">${item.name || 'Неизвестный элемент'}</strong>
+                        ${item.description ? `<small class="text-muted">${item.description}</small>` : ''}
+                        ${item.sku ? `<div><small class="text-muted">Артикул: ${item.sku}</small></div>` : ''}
+                    </div>
+                </td>
+                <td class="text-end">
+                    ${price > 0 ? `<span class="fw-bold text-primary">${price} ₽</span>` : '<span class="text-muted">—</span>'}
+                </td>
+            </tr>
+        `;
+    });
+
+    html += `
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}

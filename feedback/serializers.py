@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Review
+from .models import ProductReview
 
 
-class ReviewSerializer(serializers.ModelSerializer):
+class ProductReviewSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Review
+        model = ProductReview
         fields = ['user', 'product', 'text']
 
     def create(self, validated_data):

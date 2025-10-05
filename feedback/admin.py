@@ -1,31 +1,57 @@
 from django.contrib import admin
 
-from .models import Review, Answer, Question, ProductRating
+from .models import ProductReview, SetReview, Answer, ProductQuestion, SetQuestion, GeneralQuestion
+from django.contrib.contenttypes.admin import GenericStackedInline
 
 
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
     class Meta:
-        model = Review
+        model = ProductReview
         fields = '__all__'
+        readonly_fields = ['created_at', ]
 
 
-@admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
+@admin.register(SetReview)
+class SetReviewAdmin(admin.ModelAdmin):
     class Meta:
-        model = Answer
+        model = SetReview
         fields = '__all__'
+        readonly_fields = ['created_at', ]
 
 
-@admin.register(Question)
-class QuestionAdmin(admin.ModelAdmin):
+class AnswerInline(GenericStackedInline):
+    model = Answer
+    fields = ['user', 'text', 'created_at']
+    extra = 1
+    readonly_fields = ['created_at', ]
+
+
+@admin.register(ProductQuestion)
+class ProductQuestionAdmin(admin.ModelAdmin):
+    inlines = (AnswerInline,)
+
     class Meta:
-        model = Question
+        model = ProductQuestion
         fields = '__all__'
+        readonly_fields = ['created_at', ]
 
 
-@admin.register(ProductRating)
-class ProductRatingAdmin(admin.ModelAdmin):
+@admin.register(SetQuestion)
+class SetQuestionAdmin(admin.ModelAdmin):
+    inlines = (AnswerInline,)
+
     class Meta:
-        model = ProductRating
+        model = SetQuestion
         fields = '__all__'
+        readonly_fields = ['created_at', ]
+
+
+@admin.register(GeneralQuestion)
+class GeneralQuestionAdmin(admin.ModelAdmin):
+    inlines = (AnswerInline,)
+
+    class Meta:
+        model = GeneralQuestion
+        fields = '__all__'
+        readonly_fields = ['created_at', ]

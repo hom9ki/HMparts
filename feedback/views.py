@@ -1,10 +1,8 @@
-from django.core.serializers import serialize
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from feedback.models import Review
-from .serializers import ReviewSerializer
+from feedback.models import ProductReview
+from .serializers import ProductReviewSerializer
 from product.models import Product
 
 
@@ -21,8 +19,7 @@ def add_review(request, slug):
     if request.method == 'POST':
         product = Product.objects.get(slug=slug)
 
-        if Review.objects.filter(user=request.user, product=product).exists():
-            print('Вы уже оставляли отзыв на этот товар')
+        if ProductReview.objects.filter(user=request.user, product=product).exists():
             return Response({
                 "error": "Вы уже оставляли отзыв на этот товар"
             }, status=400)
@@ -33,7 +30,7 @@ def add_review(request, slug):
             "text": request.data.get('text'),
 
         }
-        serializer = ReviewSerializer(data=review_data, context={'request': request})
+        serializer = ProductReviewSerializer(data=review_data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)

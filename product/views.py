@@ -1,26 +1,29 @@
 from itertools import chain
 
 from django.core.paginator import Paginator
-from django.db.models import Q, Avg, Exists, OuterRef
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from garage.models import Garage
-from .models import HitProduct, Product, SuperCategory, SubCategory, Category, Set, HitSet
-from feedback.models import Review
+from .models import Product, SuperCategory, SubCategory, Category, Set
+from feedback.models import ProductReview
 from .middleware import sc_context_processor
-from .utillities.search import search
+from .utillities.search import search, hits_search
 from .serializers import ProductDescriptionSerializer, SetSerializer, ReviewSerializer, QuestionSerializer
 
 
 def index(request):
-    hit_products = HitProduct.objects.select_related('product').all()
-    hit_sets = HitSet.objects.select_related('set_object').all()
-    hits = chain(hit_products, hit_sets)
-    hits = list(hits)
-    hits.sort(key=lambda x: x.created_at, reverse=True)
-    return render(request, 'index.html', {'hits': hits})
+    """Отображение главной страницы"""
+    hits = hits_search()
+    return render(request, 'index.html', {'hits': hits[:3]})
+
+
+def hits(request):
+    """Отображение страницы с хитами продаж"""
+    hits = hits_search()
+    return render(request, 'hit_list.html', {'hits': hits})
 
 
 def supercategory(request):
@@ -30,23 +33,24 @@ def supercategory(request):
 
 def product_card(request, slug):
     product = Product.objects.select_related('category').prefetch_related('descriptions',
-                                                                          'reviews',
-                                                                          'questions',
+                                                                          'product_reviews',
+                                                                          'product_questions',
                                                                           'additionalimage_set',
                                                                           'applicability__model').get(slug=slug)
     main_avto = Garage.objects.get(user=request.user)
 
     has_descriptions = product.descriptions.all().exists()
-    has_reviews = product.reviews.all().exists()
-    has_questions = product.questions.all().exists()
+    has_reviews = product.product_reviews.all().exists()
+    has_questions = product.product_questions.all().exists()
     has_set = product.sets.all().exists()
-    applicability = [apply.name for apply in product.applicability.model.all()]
-    user_cars = [a.car_model.name for a in main_avto.garage.all() if a.is_main]
-    has_common = any(model in applicability for model in user_cars)
-    print(applicability, user_cars, has_common)
-    if has_common:
+    try:
+        applicability = [apply.name for apply in product.applicability.model.all()]
+        user_cars = [a.car_model.name for a in main_avto.garage.all() if a.is_main]
+        has_common = any(model in applicability for model in user_cars)
         main_avto = ''.join(user_cars)
-    else:
+    except Exception as e:
+        print(f'Error: {e}')
+        has_common = False
         main_avto = None
     return render(request, 'product_card.html', {'product': product,
                                                  'has_descriptions': has_descriptions,
@@ -125,11 +129,12 @@ def product_api(request, slug, action):
         queryset = product.descriptions.filter(product=product)
         serializer = ProductDescriptionSerializer(queryset, many=True)
     elif action == 'reviews':
-        reviews = Review.objects.filter(product=product).select_related('user')
+        reviews = ProductReview.objects.filter(product=product).select_related('user')
         serializer = ReviewSerializer(reviews, many=True)
     elif action == 'questions':
-        questions = product.questions.select_related('user').prefetch_related('answers__user')
+        questions = product.product_questions.select_related('user')
         serializer = QuestionSerializer(questions, many=True)
+        print(serializer.data)
     elif action == 'set':
         sets = product.sets.all()
         serializer = SetSerializer(sets, many=True)
@@ -140,6 +145,6 @@ def product_api(request, slug, action):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
-def add_review(request, slug):
-    print(request.data)
+@api_view()
+def set_api(request, slug, action):
+    set_product = get_object_or_404(Set, slug=slug)

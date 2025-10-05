@@ -17,7 +17,7 @@
 </head>
 <body>
 <!-- Header -->
-<header class="bg-dark">
+<header class="fixed-top bg-dark">
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
@@ -74,7 +74,7 @@
                             <a class="nav-link" href="{% url 'product:set_all'%}">Комплекты</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Хиты</a>
+                            <a class="nav-link" href="{% url 'product:hits' %}">Хиты</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Доставка</a>
@@ -100,8 +100,8 @@
                     </ul>
 
                     <!-- Поисковая строка -->
-                    <form class="d-flex me-3" method="get" action="{% url 'product:search' %}"
-                          style="min-width: 300px;">
+                    <form class="d-flex me-2" method="get" action="{% url 'product:search' %}"
+                          style="min-width: 250px;">
                         <div class="input-group">
                             <input type="text"
                                    name="q"
@@ -110,7 +110,7 @@
                                    aria-label="Поиск"
                                    value="{{ request.GET.q }}">
                             <button class="btn btn-outline-light" type="submit">
-                                <i class="fas fa-search"></i>
+                                <i class="fas fa-search">Поиск</i>
                             </button>
                         </div>
                     </form>
@@ -118,7 +118,7 @@
                     <!-- Поиск и действия пользователя -->
                     <div class="d-flex align-items-center">
                         <!-- Кнопка Корзина -->
-                        <a href="#" class="btn btn-outline-light me-3 position-relative">
+                        <a href="#" class="btn btn-outline-light me-1 position-relative">
                             <i class="fas fa-shopping-cart me-2"></i>
                             Корзина
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
@@ -128,7 +128,7 @@
 
                         <!-- Выпадающее меню Личный кабинет -->
                         <div class="dropdown">
-                            <button class="btn btn-outline-light dropdown-toggle" type="button"
+                            <button class="btn btn-outline-light me-1 dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-2"></i>
                                 {% if user.is_authenticated %}
@@ -196,7 +196,7 @@
 </header>
 
 <!-- Основное содержимое -->
-<main>
+<main style="margin-top: 40px;">
     {% block content %}
     <!-- Содержимое будет в дочерних шаблонах -->
     {% endblock %}

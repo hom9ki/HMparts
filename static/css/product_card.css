@@ -264,3 +264,32 @@
         resize: vertical;
         min-height: 120px;
     }
+        /* Добавьте в product_card.css */
+    .qa-item {
+        transition: all 0.3s ease;
+    }
+
+    .qa-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .question-icon, .answer-icon {
+        flex-shrink: 0;
+    }
+
+    .question-text, .answer-text {
+        border-left: 4px solid;
+    }
+
+    .question-text {
+        border-left-color: #007bff;
+    }
+
+    .answer-text {
+        border-left-color: #28a745;
+    }
+
+    .quote-icon {
+        font-size: 0.8rem;
+    }

@@ -1,8 +1,9 @@
-from django.db.models import Avg
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework import serializers
 
 from .models import ProductDescription, Set
-from feedback.models import Review, Question, Answer
+from feedback.models import ProductReview, ProductQuestion, Answer
 
 
 class ProductDescriptionSerializer(serializers.ModelSerializer):
@@ -22,10 +23,9 @@ class SetSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.username', read_only=True)
     avatar = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
 
     class Meta:
-        model = Review
+        model = ProductReview
         fields = '__all__'
 
     def get_avatar(self, obj):
@@ -33,12 +33,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             print(obj.user.avatar.url)
             return obj.user.avatar.url
         return None
-
-    def get_rating(self, obj):
-        if obj.product.ratings.all():
-            return obj.product.ratings.aggregate(Avg('rating'))['rating__avg']
-        else:
-            return None
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -50,9 +44,14 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    answers = AnswerSerializer(many=True, read_only=True)
+    answers = serializers.SerializerMethodField()
     user_name = serializers.CharField(source='user.username', read_only=True)
 
     class Meta:
-        model = Question
+        model = ProductQuestion
         fields = '__all__'
+
+    def get_answers(self, obj):
+        content_type = ContentType.objects.get_for_model(ProductQuestion)
+        answers = Answer.objects.filter(content_type=content_type, object_id=obj.id).select_related('user')
+        return AnswerSerializer(answers, many=True).data

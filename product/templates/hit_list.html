@@ -1,59 +1,33 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Автозапчасти - поиск и продажа автодеталей{% endblock %}
+{% block title %}Хиты продаж - {{ block.super }}{% endblock %}
 
 {% block content %}
-<section class="py-4 bg-light">
+<section class="py-5">
     <div class="container">
-        <!-- Главный поиск -->
-        <div class="row justify-content-center mb-5">
-            <div class="col-12 col-lg-10">
-                <div class="text-center mb-4">
-                    <h1 class="display-5 fw-bold text-dark mb-3">Найдите запчасти для вашего авто</h1>
-                    <p class="lead text-muted">Поиск по названию, артикулу или модели автомобиля</p>
-                </div>
+        <!-- Хлебные крошки -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'product:index' %}">Главная</a></li>
+                <li class="breadcrumb-item active">Хиты продаж</li>
+            </ol>
+        </nav>
 
-                <!-- Длинная строка поиска -->
-                <form action="{% url 'product:search' %}" method="get" class="search-form">
-                    <div class="input-group input-group-lg shadow">
-                        <input type="text"
-                               name="q"
-                               class="form-control form-control-lg border-0"
-                               placeholder="Например: 'тормозные колодки', '123456789', 'Toyota Camry'..."
-                               aria-label="Поиск запчастей"
-                               value="{{ request.GET.q }}">
-                        <button class="btn btn-primary px-4" type="submit">
-                            <i class="fas fa-search me-2"></i>Найти
-                        </button>
-                    </div>
-                    <div class="form-text mt-2 text-center">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Ищите по названию товара, артикулу, модели или марке автомобиля
-                        </small>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Хиты продаж -->
-<section class="py-3">
-    <div class="container">
+        <!-- Заголовок -->
         <div class="row mb-4">
-            <div class="col-12 text-center">
-                <h2 class="h3 mb-2">Хиты продаж</h2>
-                <p class="text-muted">Самые популярные товары среди покупателей</p>
+            <div class="col-12">
+                <h1 class="h2 mb-3">Хиты продаж</h1>
+                <p class="text-muted">Самые популярные товары и комплекты</p>
             </div>
         </div>
 
-        <!-- Сетка хитов - 3 карточки по центру -->
-        <div class="row justify-content-center">
+
+        <!-- Сетка хитов -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             {% for hit in hits %}
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm position-relative product-card mx-auto" style="max-width: 320px;">
+            <div class="col">
+                <div class="card h-100 shadow-sm position-relative">
                     <!-- Ссылка на товар/комплект -->
                     {% if hit.product %}
                     <a href="{% url 'product:product_card' hit.product.slug %}" class="stretched-link"></a>
@@ -125,21 +99,45 @@
                                 {% endif %}
                             </span>
                             <small class="text-muted">
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                {{ hit.sales_count }}
+                                <i class="fas fa-star text-warning"></i>
+                                4.8
                             </small>
                         </div>
+                    </div>
+
+                    <!-- Футер карточки -->
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <small class="text-muted">
+                            <i class="fas fa-box me-1"></i>
+                            В наличии:
+                            {% if hit.product %}
+                            {{ hit.product.quantity }} шт.
+                            {% elif hit.set_object %}
+                            {{ hit.set_object.get_quantity }} шт.
+                            {% endif %}
+                        </small>
                     </div>
                 </div>
             </div>
             {% empty %}
             <div class="col-12">
-                <div class="text-center py-4">
-                    <i class="fas fa-crown fa-2x text-muted mb-3"></i>
-                    <p class="text-muted">Пока нет популярных товаров</p>
+                <div class="text-center py-5">
+                    <i class="fas fa-crown fa-3x text-muted mb-3"></i>
+                    <h3>Хиты не найдены</h3>
+                    <p class="text-muted">Пока нет популярных товаров или комплектов</p>
+                    <a href="{% url 'product:index' %}" class="btn btn-primary">Вернуться в каталог</a>
                 </div>
             </div>
             {% endfor %}
+        </div>
+
+        <!-- Описание раздела -->
+        <div class="mt-5 pt-4 border-top">
+            <h3 class="h5">Почему эти товары стали хитами?</h3>
+            <p class="text-muted">
+                В этом разделе собраны самые популярные товары и комплекты, которые чаще всего выбирают наши покупатели.
+                Здесь вы найдете проверенные временем решения и лучшие предложения.
+            </p>
         </div>
     </div>
 </section>
@@ -147,55 +145,40 @@
 
 {% block extra_css %}
 <style>
-    .search-form .form-control {
-        border-radius: 0.5rem 0 0 0.5rem;
-        padding: 1rem 1.5rem;
-        font-size: 1.1rem;
-    }
-
-    .search-form .btn {
-        border-radius: 0 0.5rem 0.5rem 0;
-        padding: 1rem 2rem;
-    }
-
     .product-image-container {
         transition: transform 0.3s ease;
     }
 
-    .product-card:hover .product-image-container {
+    .card:hover .product-image-container {
         transform: scale(1.05);
     }
 
-    .product-card {
+    .card {
         transition: all 0.3s ease;
     }
 
-    .product-card:hover {
+    .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
     }
 
     .object-fit-cover {
         object-fit: cover;
     }
 
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+    }
+
     .badge {
         font-size: 0.75rem;
-        backdrop-filter: blur(10px);
-        background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
     }
 </style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.querySelector('input[name="q"]');
-
-        if (searchInput) {
-            // Фокус на поиск при загрузке
-            searchInput.focus();
-        }
-    });
-</script>
 {% endblock %}

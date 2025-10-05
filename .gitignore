@@ -167,6 +167,7 @@ cython_debug/
 
 .idea/
 media/
+media_backup/
 
 
 # PyCharm
