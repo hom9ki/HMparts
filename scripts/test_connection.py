@@ -5,9 +5,9 @@ def test_connection():
     conn = psycopg2.connect(
         host='localhost',
         port=5432,
-        user='postgres',
+        user='xomma',
         password='nokia920',
-        database='postgres'
+        database='education'
     )
 
     print('✓ Подключение успешно!')
