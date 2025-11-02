@@ -1,9 +1,9 @@
 import os
 import yadisk
-from django.conf import settings
+from app.settings import MEDIA_ROOT
+
 
 def upload_recurcive(ya, remote_path, local_path):
-
     for item_name in os.listdir(local_path):
         if item_name == '.gitkeep':
             continue
@@ -23,9 +23,9 @@ def upload_recurcive(ya, remote_path, local_path):
 
 
 def upload_media():
-    TOKEN = 'a1c953cfaffb471b916da5b545055d4c'
+    TOKEN = 'y0__xDy68rUARjblgMg-4fl_xRBDTuFF7oXhhaIUdxaNLOLXULbjQ'
     REMOTE_MEDIA_PATH = '/HMparts_media'
-    LOCAL_MEDIA_PATH = settings.MEDIA_ROOT
+    LOCAL_MEDIA_PATH = MEDIA_ROOT
 
     try:
         ya = yadisk.YaDisk(token=TOKEN)
@@ -47,6 +47,7 @@ def upload_media():
     except Exception as e:
         print(f'Ошибка при скачивании: {e}')
         return False
+
 
 if __name__ == '__main__':
     upload_media()

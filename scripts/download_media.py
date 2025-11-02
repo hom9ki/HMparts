@@ -18,7 +18,7 @@ def download_recursive(ya, remote_path, local_path):
 
 
 def download_media():
-    TOKEN = 'a1c953cfaffb471b916da5b545055d4c'
+    TOKEN = 'y0__xDy68rUARjblgMg-4fl_xRBDTuFF7oXhhaIUdxaNLOLXULbjQ'
     REMOTE_MEDIA_PATH = '/HMparts_media'
     LOCAL_MEDIA_PATH = settings.MEDIA_ROOT
 
