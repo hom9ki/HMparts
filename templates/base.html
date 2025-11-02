@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/product_card.css' %}">
 
+
     {% block extra_css %}{% endblock %}
 
 
@@ -118,7 +119,7 @@
                     <!-- Поиск и действия пользователя -->
                     <div class="d-flex align-items-center">
                         <!-- Кнопка Корзина -->
-                        <a href="#" class="btn btn-outline-light me-1 position-relative">
+                        <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-light me-1 position-relative">
                             <i class="fas fa-shopping-cart me-2"></i>
                             Корзина
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">

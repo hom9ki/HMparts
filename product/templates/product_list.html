@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block title %}Товары категории {{ subcategory.name }} - {{ block.super }}{% endblock %}
 
 {% block content %}
@@ -14,7 +13,6 @@
                 <h2 class="h3 mb-0">Каталог товаров</h2>
             </div>
         </div>
-
 
         <!-- Сетка товаров -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
@@ -51,12 +49,40 @@
                         {% endif %}
 
                         <!-- Цена и рейтинг -->
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="text-primary fw-bold">{{ product.price }} ₽</span>
                             <small class="text-muted">
                                 <i class="fas fa-star text-warning"></i>
                                 4.8
                             </small>
+                        </div>
+
+                        <!-- Кнопки добавления/убавления товара -->
+                        <div class="cart-controls">
+                            {% if product.quantity > 0 %}
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button class="btn btn-outline-danger btn-sm decrease-btn"
+                                        data-product-id="{{ product.id }}"
+                                        title="Убрать из корзины">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+
+                                <span class="quantity-badge mx-2 px-2 py-1 bg-light rounded">
+                                    <span id="quantity-{{ product.id }}">0</span> шт.
+                                </span>
+
+                                <button class="btn btn-outline-success btn-sm increase-btn"
+                                        data-product-id="{{ product.id }}"
+                                        title="Добавить в корзину">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            {% else %}
+                            <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                <i class="fas fa-times me-1"></i>
+                                Нет в наличии
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -118,7 +144,6 @@
         </div>
         {% endif %}
     </div>
-
 </section>
 {% endblock %}
 
@@ -154,5 +179,39 @@
         background-color: #007bff;
         border-color: #007bff;
     }
+
+    .cart-controls {
+        position: relative;
+        z-index: 10;
+    }
+
+    .quantity-badge {
+        font-size: 0.85rem;
+        font-weight: 600;
+        min-width: 50px;
+        text-align: center;
+    }
+
+    .decrease-btn, .increase-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .stretched-link::after {
+        z-index: 1;
+    }
+
+    .btn {
+        position: relative;
+        z-index: 2;
+    }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/cart_add.js' %}"></script>
 {% endblock %}

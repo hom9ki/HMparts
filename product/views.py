@@ -8,10 +8,11 @@ from rest_framework.response import Response
 
 from garage.models import Garage
 from .models import Product, SuperCategory, SubCategory, Category, Set
-from feedback.models import ProductReview
+from feedback.models import ProductReview, SetReview
 from .middleware import sc_context_processor
 from .utillities.search import search, hits_search
-from .serializers import ProductDescriptionSerializer, SetSerializer, ReviewSerializer, QuestionSerializer
+from .serializers import ProductDescriptionSerializer, SetSerializer, ReviewSerializer, ProductQuestionSerializer, \
+    SetDescriptionSerializer, SetReviewSerializer, ProductSerializer, SetQuestionSerializer
 
 
 def index(request):
@@ -133,7 +134,7 @@ def product_api(request, slug, action):
         serializer = ReviewSerializer(reviews, many=True)
     elif action == 'questions':
         questions = product.product_questions.select_related('user')
-        serializer = QuestionSerializer(questions, many=True)
+        serializer = ProductQuestionSerializer(questions, many=True)
         print(serializer.data)
     elif action == 'set':
         sets = product.sets.all()
@@ -145,6 +146,23 @@ def product_api(request, slug, action):
     return Response(serializer.data)
 
 
-@api_view()
+@api_view(['GET'])
 def set_api(request, slug, action):
     set_product = get_object_or_404(Set, slug=slug)
+    if action == 'descriptions':
+        return Response({'description': set_product.description})
+    elif action == 'reviews':
+        reviews = SetReview.objects.filter(set=set_product).select_related('user')
+
+        serializer = SetReviewSerializer(reviews, many=True)
+    elif action == 'questions':
+        questions = set_product.set_questions.select_related('user')
+        serializer = SetQuestionSerializer(questions, many=True)
+    elif action == 'set':
+        products = set_product.products.all()
+        print(products)
+        serializer = ProductSerializer(products, many=True)
+    else:
+        return Response({'error': 'Invalid action'}, status=400)
+
+    return Response(serializer.data)

@@ -19,5 +19,5 @@ urlpatterns = [
     path('hits/', views.hits, name='hits'),
 
     path('api/product/<slug:slug>/<str:action>/', views.product_api, name='product_api'),
-    # path('api/review/<slug:slug>/', views.add_review, name='add_review'),
+    path('api/set/<slug:slug>/<str:action>/', views.set_api, name='set_api'),
 ]
