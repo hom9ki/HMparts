@@ -1,6 +1,6 @@
 import os
 import yadisk
-from django.conf import settings
+from app.settings import MEDIA_ROOT
 
 
 def download_recursive(ya, remote_path, local_path):
@@ -20,7 +20,7 @@ def download_recursive(ya, remote_path, local_path):
 def download_media():
     TOKEN = 'y0__xDy68rUARjblgMg-4fl_xRBDTuFF7oXhhaIUdxaNLOLXULbjQ'
     REMOTE_MEDIA_PATH = '/HMparts_media'
-    LOCAL_MEDIA_PATH = settings.MEDIA_ROOT
+    LOCAL_MEDIA_PATH = MEDIA_ROOT
 
     try:
         ya = yadisk.YaDisk(token=TOKEN)
