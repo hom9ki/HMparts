@@ -1,0 +1,240 @@
+[
+{
+  "model": "garage.brand",
+  "pk": 1,
+  "fields": {
+    "name": "Lada"
+  }
+},
+{
+  "model": "garage.brand",
+  "pk": 2,
+  "fields": {
+    "name": "Chevrolet"
+  }
+},
+{
+  "model": "garage.brand",
+  "pk": 3,
+  "fields": {
+    "name": "Datsun"
+  }
+},
+{
+  "model": "garage.brand",
+  "pk": 4,
+  "fields": {
+    "name": "Renault"
+  }
+},
+{
+  "model": "garage.brand",
+  "pk": 5,
+  "fields": {
+    "name": "Honda"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 1,
+  "fields": {
+    "brand": 1,
+    "name": "Vesta NG",
+    "image": "model_car/1758971951.990612Vesta_NG_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 2,
+  "fields": {
+    "brand": 1,
+    "name": "Vesta",
+    "image": "model_car/1758971940.212529Vesta_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 3,
+  "fields": {
+    "brand": 1,
+    "name": "Vesta Sport",
+    "image": ""
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 4,
+  "fields": {
+    "brand": 1,
+    "name": "X-Ray",
+    "image": ""
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 5,
+  "fields": {
+    "brand": 1,
+    "name": "Kalina",
+    "image": "model_car/1758971926.621773Kalina_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 6,
+  "fields": {
+    "brand": 1,
+    "name": "Kalina 2",
+    "image": "model_car/1758971917.105253Kalina_2_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 7,
+  "fields": {
+    "brand": 1,
+    "name": "Kalina Sport",
+    "image": "model_car/1758971904.564182Kalina_Sport_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 8,
+  "fields": {
+    "brand": 1,
+    "name": "Kalina 2 Sport",
+    "image": ""
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 9,
+  "fields": {
+    "brand": 1,
+    "name": "Granta",
+    "image": "model_car/1758971867.447155Granta_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 10,
+  "fields": {
+    "brand": 1,
+    "name": "Kalina NFR",
+    "image": ""
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 11,
+  "fields": {
+    "brand": 1,
+    "name": "Granta GL",
+    "image": ""
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 12,
+  "fields": {
+    "brand": 1,
+    "name": "Granta Sport",
+    "image": "model_car/1758971823.157159Granta_Sport_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 13,
+  "fields": {
+    "brand": 1,
+    "name": "Priora",
+    "image": "model_car/1758971811.463941Priora_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 14,
+  "fields": {
+    "brand": 1,
+    "name": "110",
+    "image": "model_car/1758971767.064725110_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 15,
+  "fields": {
+    "brand": 1,
+    "name": "Samara",
+    "image": "model_car/1759508785.094672Samara_.jpg"
+  }
+},
+{
+  "model": "garage.model",
+  "pk": 16,
+  "fields": {
+    "brand": 1,
+    "name": "Samara 2",
+    "image": "model_car/1759508785.101802Samara_2_.jpg"
+  }
+},
+{
+  "model": "garage.garage",
+  "pk": 1,
+  "fields": {
+    "user": 1
+  }
+},
+{
+  "model": "garage.garage",
+  "pk": 3,
+  "fields": {
+    "user": 4
+  }
+},
+{
+  "model": "garage.usercar",
+  "pk": 1,
+  "fields": {
+    "garage": 1,
+    "car_model": 2,
+    "is_main": true
+  }
+},
+{
+  "model": "garage.usercar",
+  "pk": 6,
+  "fields": {
+    "garage": 3,
+    "car_model": 5,
+    "is_main": false
+  }
+},
+{
+  "model": "garage.usercar",
+  "pk": 7,
+  "fields": {
+    "garage": 3,
+    "car_model": 9,
+    "is_main": false
+  }
+},
+{
+  "model": "garage.usercar",
+  "pk": 8,
+  "fields": {
+    "garage": 1,
+    "car_model": 13,
+    "is_main": false
+  }
+},
+{
+  "model": "garage.usercar",
+  "pk": 12,
+  "fields": {
+    "garage": 1,
+    "car_model": 6,
+    "is_main": false
+  }
+}
+]

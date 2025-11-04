@@ -1,0 +1,78 @@
+[
+{
+  "model": "users.customuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$uyLzfkEcPYPGHmfSFZTKrD$7H3MrzqTKAcPZ1o3nze+onv20R6VG4GOsmEw1e6H5VU=",
+    "last_login": "2025-11-03T09:53:04.512Z",
+    "is_superuser": true,
+    "username": "xomma",
+    "first_name": "Александр",
+    "last_name": "Корягин",
+    "email": "hom9ki83@mail.ru",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-29T08:54:07.676Z",
+    "avatar": "avatars/5370934467566364319.jpg",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$BPM0HLRymUce9epoCXtrjd$2b057QyAU4sLYPL+nMkEW8ktFBHa8yx5b0xa+63floU=",
+    "last_login": "2025-10-01T20:31:00.014Z",
+    "is_superuser": false,
+    "username": "hom9ki",
+    "first_name": "Саша",
+    "last_name": "Корягин",
+    "email": "xommamotors@mail.ru",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T15:22:43.509Z",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$nt27xz4XQsc24oJXne657o$vODVuhmd0lLHpwflhW76wO+drNwz/Be8rvo2JXZkEaM=",
+    "last_login": "2025-08-29T15:32:39.960Z",
+    "is_superuser": false,
+    "username": "Korya_bf68",
+    "first_name": "Владимир",
+    "last_name": "Корягин",
+    "email": "mir9591@mail.ru",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T15:32:38.717Z",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$uD1sEya0U5pBifM3cWaD6a$JyBQPdwcsHTnGZub5zQj1rSBbbK1J2DGFdr+veQb5nY=",
+    "last_login": "2025-08-29T18:40:44.543Z",
+    "is_superuser": false,
+    "username": "Ira",
+    "first_name": "Din",
+    "last_name": "Winhester",
+    "email": "win2005@mail.ru",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-29T18:40:42.362Z",
+    "avatar": "",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

@@ -1,0 +1,123 @@
+[
+{
+  "model": "feedback.productreview",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "text": "Подошёл без допиливании, все прекрасно",
+    "rating": 0,
+    "created_at": "2025-10-05T14:29:07.258Z",
+    "product": 2
+  }
+},
+{
+  "model": "feedback.productreview",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "text": "ркипмлоывтмывтмдл",
+    "rating": 0,
+    "created_at": "2025-10-05T15:39:47.001Z",
+    "product": 4
+  }
+},
+{
+  "model": "feedback.productreview",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "text": "smcjsnjcvknsklcndks",
+    "rating": 0,
+    "created_at": "2025-10-12T17:40:33.968Z",
+    "product": 7
+  }
+},
+{
+  "model": "feedback.setreview",
+  "pk": 1,
+  "fields": {
+    "user": 4,
+    "text": "Хороший комплект",
+    "rating": 5,
+    "created_at": "2025-10-05T19:48:27.684Z",
+    "set": 2
+  }
+},
+{
+  "model": "feedback.productquestion",
+  "pk": 1,
+  "fields": {
+    "user": 4,
+    "text": "ыьтсывьтслымло",
+    "created_at": "2025-10-05T15:08:13.707Z",
+    "is_answered": true,
+    "product": 2
+  }
+},
+{
+  "model": "feedback.setquestion",
+  "pk": 3,
+  "fields": {
+    "user": 4,
+    "text": "ывормиывислоивсолы",
+    "created_at": "2025-10-05T14:18:18.429Z",
+    "is_answered": true,
+    "set": 1
+  }
+},
+{
+  "model": "feedback.setquestion",
+  "pk": 4,
+  "fields": {
+    "user": 4,
+    "text": "kjsdnvklsdnvnsdvi",
+    "created_at": "2025-10-05T20:11:44.720Z",
+    "is_answered": true,
+    "set": 2
+  }
+},
+{
+  "model": "feedback.answer",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "text": "Добрый день.\r\nНет, данный комплект подходит только для автомобилей семейства Vesta",
+    "created_at": "2025-10-05T14:16:00.452Z",
+    "content_type": 36,
+    "object_id": 2
+  }
+},
+{
+  "model": "feedback.answer",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "text": "jhdfhjsdcs",
+    "created_at": "2025-10-05T14:18:27.977Z",
+    "content_type": 36,
+    "object_id": 3
+  }
+},
+{
+  "model": "feedback.answer",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "text": "ьрывисывислоыивлосивы",
+    "created_at": "2025-10-05T15:12:51.789Z",
+    "content_type": 35,
+    "object_id": 1
+  }
+},
+{
+  "model": "feedback.answer",
+  "pk": 7,
+  "fields": {
+    "user": 1,
+    "text": "jksndcvkjsdbnvkj",
+    "created_at": "2025-10-05T20:15:08.455Z",
+    "content_type": 36,
+    "object_id": 4
+  }
+}
+]
