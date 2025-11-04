@@ -1,10 +1,11 @@
 import os
 import chardet
 
+dumps_list = ['users', 'product', 'garage', 'feedback', 'cart']
 
-def fix_encoding():
+def fix_encoding(dump):
     try:
-        dump_path = "../fixtures/dump.json"
+        dump_path = f"../fixtures/{dump}_data.json"
 
         if not os.path.exists(dump_path):
             print("Файл не найден")
@@ -28,4 +29,5 @@ def fix_encoding():
 
 
 if __name__ == '__main__':
-    fix_encoding()
+    for dump in dumps_list:
+        fix_encoding(dump)
