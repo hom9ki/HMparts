@@ -3,7 +3,16 @@ from settings import db_conf
 
 
 def test_connection():
-    conn = psycopg2.connect(**db_conf)
+    db_config = {
+        'host': 'localhost',
+        'port': 5432,
+        'user': 'xomma',
+        'password': 'nokia920',
+        'database': 'postgres'
+    }
+    print(db_conf)
+    print(db_config)
+    conn = psycopg2.connect(**db_config)
 
     print('✓ Подключение успешно!')
 
