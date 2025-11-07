@@ -6,7 +6,7 @@ dumps_list = ['users', 'product', 'garage', 'feedback', 'cart']
 
 def fix_encoding(dump):
     try:
-        dump_path = f"../fixtures/{dump}_data.json"
+        dump_path = f"fixtures/{dump}_data.json"
 
         if not os.path.exists(dump_path):
             print("Файл не найден")

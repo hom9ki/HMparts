@@ -3,21 +3,21 @@ import yadisk
 from settings import TOKEN, REMOTE_MEDIA_PATH, LOCAL_MEDIA_PATH
 
 
-def download_recursive(ya, remote_path, local_path):
+def download_media(ya, remote_path, local_path):
     for item in ya.listdir(remote_path):
         remote_item_path = item.path
         local_item_path = os.path.join(local_path, item.name)
 
         if item.type == 'dir':
             os.makedirs(local_item_path, exist_ok=True)
-            download_recursive(ya, remote_item_path, local_item_path)
-            print('Скачана папка: {item.name}"')
+            download_media(ya, remote_item_path, local_item_path)
+            print(f'Скачана папка: {item.name}"')
         else:
             ya.download(remote_item_path, local_item_path)
-            print('Скачан файл: {item.name}')
+            print(f'Скачан файл: {item.name}')
 
 
-def download_media():
+def connect_yandex():
     print('Загрузка медиафайлов с Яндекс.Диска')
     try:
         ya = yadisk.YaDisk(token=TOKEN)
@@ -32,7 +32,7 @@ def download_media():
 
         os.makedirs(LOCAL_MEDIA_PATH, exist_ok=True)
 
-        download_recursive(ya, REMOTE_MEDIA_PATH, LOCAL_MEDIA_PATH)
+        download_media(ya, REMOTE_MEDIA_PATH, LOCAL_MEDIA_PATH)
         print('Медиафайлы успешно скачаны с Яндекс.Диска')
         return True
     except Exception as e:
@@ -41,4 +41,4 @@ def download_media():
 
 
 if __name__ == '__main__':
-    download_media()
+    connect_yandex()
