@@ -11,7 +11,6 @@ def init_dump():
         print(f'Рабочая директория{os.getcwd()}')
         print(f'Директория проекта {project_dir}')
         path = f'fixtures/{dump}_data.json'
-
         cmd = ['python', 'manage.py', 'loaddata', path]
         subprocess.run(cmd, capture_output=True, text=True, check=True)
         print(f'Dump {dump} загружен.')

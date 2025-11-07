@@ -3,6 +3,7 @@ import chardet
 
 dumps_list = ['users', 'product', 'garage', 'feedback', 'cart']
 
+
 def fix_encoding(dump):
     try:
         dump_path = f"../fixtures/{dump}_data.json"
@@ -21,7 +22,7 @@ def fix_encoding(dump):
         with open(dump_path, 'w', encoding='utf-8') as f:
             f.write(content)
 
-        print("Файл успешно перекодирован")
+        print(f"Файл {dump}_data.json успешно перекодирован")
         return True
     except Exception as e:
         print(f"Ошибка при перекодировании: {e}")
