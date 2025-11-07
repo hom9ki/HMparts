@@ -1,7 +1,7 @@
 import psycopg2
 import sys
 import os
-from settings import db_conf
+from settings import db_conf, super_db_config
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -33,16 +33,8 @@ def create_database():
 
 
 def create_user_if_not_exists():
-    db_config = {
-        'host': 'localhost',
-        'port': 5432,
-        'user': 'postgres',
-        'password': 'nokia920',
-        'database': 'postgres'
-    }
-
     try:
-        connection = psycopg2.connect(**db_config)
+        connection = psycopg2.connect(**super_db_config)
         connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = connection.cursor()
 
@@ -77,7 +69,8 @@ def test_connection():
     cursor = conn.cursor()
     cursor.execute("SELECT version();")
     print(f"Версия PostgreSQL: {cursor.fetchone()[0]}")
-    print(f'\nhost: {db_conf["host"]}\nport: {db_conf["port"]}\nuser: {db_conf["user"]}\ndatabase: {db_conf["database"]}')
+    print(
+        f'\nhost: {db_conf["host"]}\nport: {db_conf["port"]}\nuser: {db_conf["user"]}\ndatabase: {db_conf["database"]}')
 
     cursor.close()
     return True

@@ -1,6 +1,5 @@
 from app.settings import MEDIA_ROOT, DATABASES
 
-
 # yandex
 TOKEN = 'y0__xDy68rUARjblgMg-4fl_xRBDTuFF7oXhhaIUdxaNLOLXULbjQ'
 REMOTE_MEDIA_PATH = '/HMparts_media'
@@ -14,4 +13,11 @@ db_conf = {
     'user': db_settings['USER'],
     'password': db_settings['PASSWORD'],
     'database': db_settings['NAME']
+}
+super_db_config = {
+    'host': 'localhost',
+    'port': 5432,
+    'user': 'postgres',
+    'password': 'nokia920',
+    'database': 'postgres'
 }
