@@ -10,13 +10,12 @@ from .forms import AddCarForm
 from .serializers import UserCarSerializer, BrandSerializer, ModelSerializer
 
 
-@login_required
 def garage_list(request):
     if request.user.is_authenticated:
         auto_list = Garage.objects.filter(user=request.user)
         return render(request, 'garage.html', {'garage': auto_list})
     else:
-        return redirect('login')
+        return redirect('account:login')
 
 
 @login_required
