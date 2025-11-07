@@ -33,33 +33,50 @@ def supercategory(request):
 
 
 def product_card(request, slug):
-    product = Product.objects.select_related('category').prefetch_related('descriptions',
-                                                                          'product_reviews',
-                                                                          'product_questions',
-                                                                          'additionalimage_set',
-                                                                          'applicability__model').get(slug=slug)
-    main_avto = Garage.objects.get(user=request.user)
+    if request.user.is_authenticated:
+        product = Product.objects.select_related('category').prefetch_related('descriptions',
+                                                                              'product_reviews',
+                                                                              'product_questions',
+                                                                              'additionalimage_set',
+                                                                              'applicability__model').get(slug=slug)
+        main_avto = Garage.objects.get(user=request.user)
 
-    has_descriptions = product.descriptions.all().exists()
-    has_reviews = product.product_reviews.all().exists()
-    has_questions = product.product_questions.all().exists()
-    has_set = product.sets.all().exists()
-    try:
-        applicability = [apply.name for apply in product.applicability.model.all()]
-        user_cars = [a.car_model.name for a in main_avto.garage.all() if a.is_main]
-        has_common = any(model in applicability for model in user_cars)
-        main_avto = ''.join(user_cars)
-    except Exception as e:
-        print(f'Error: {e}')
-        has_common = False
-        main_avto = None
-    return render(request, 'product_card.html', {'product': product,
-                                                 'has_descriptions': has_descriptions,
-                                                 'has_reviews': has_reviews,
-                                                 'has_questions': has_questions,
-                                                 'has_set': has_set,
-                                                 'has_common': has_common,
-                                                 'main_avto': main_avto})
+        has_descriptions = product.descriptions.all().exists()
+        has_reviews = product.product_reviews.all().exists()
+        has_questions = product.product_questions.all().exists()
+        has_set = product.sets.all().exists()
+        try:
+            applicability = [apply.name for apply in product.applicability.model.all()]
+            user_cars = [a.car_model.name for a in main_avto.garage.all() if a.is_main]
+            has_common = any(model in applicability for model in user_cars)
+            main_avto = ''.join(user_cars)
+        except Exception as e:
+            print(f'Error: {e}')
+            has_common = False
+            main_avto = None
+        return render(request, 'product_card.html', {'product': product,
+                                                     'has_descriptions': has_descriptions,
+                                                     'has_reviews': has_reviews,
+                                                     'has_questions': has_questions,
+                                                     'has_set': has_set,
+                                                     'has_common': has_common,
+                                                     'main_avto': main_avto})
+    else:
+        product = Product.objects.select_related('category').prefetch_related('descriptions',
+                                                                              'product_reviews',
+                                                                              'product_questions',
+                                                                              'additionalimage_set',
+                                                                              'applicability__model').get(slug=slug)
+        has_descriptions = product.descriptions.all().exists()
+        has_reviews = product.product_reviews.all().exists()
+        has_questions = product.product_questions.all().exists()
+        has_set = product.sets.all().exists()
+        return render(request, 'product_card.html', {'product': product,
+                                                     'has_descriptions': has_descriptions,
+                                                     'has_reviews': has_reviews,
+                                                     'has_questions': has_questions,
+                                                     'has_set': has_set,
+                                                     })
 
 
 def subcategory(request, slug):
