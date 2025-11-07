@@ -1,14 +1,9 @@
 import psycopg2
+from settings import db_conf
 
 
 def test_connection():
-    conn = psycopg2.connect(
-        host='localhost',
-        port=5432,
-        user='xomma',
-        password='nokia920',
-        database='education'
-    )
+    conn = psycopg2.connect(**db_conf)
 
     print('✓ Подключение успешно!')
 

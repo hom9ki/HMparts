@@ -1,7 +1,6 @@
 import psycopg2
 import sys
 import os
-from app.settings import DATABASES
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

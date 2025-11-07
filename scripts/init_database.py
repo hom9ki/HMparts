@@ -1,21 +1,14 @@
 import psycopg2
 import sys
 import os
-from app.settings import DATABASES
+from settings import db_conf
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 def create_database():
-    db_conf = {
-        'host': 'localhost',
-        'port': 5432,
-        'user': 'xomma',
-        'password': 'nokia920',
-        'database': 'postgres'
-    }
-
+    print('Подключение к БД...')
     connection = psycopg2.connect(**db_conf)
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = connection.cursor()
@@ -46,17 +39,20 @@ def create_user_if_not_exists():
         connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cursor = connection.cursor()
 
-        cursor.execute("SELECT 1 FROM pg_roles WHERE rolname = 'xomma'")
+        cursor.execute("SELECT 1 FROM pg_roles WHERE rolname = %s", db_conf['user'])
         exists_user = cursor.fetchone()
 
         if not exists_user:
-            cursor.execute("CREATE USER xomma WITH CREATEDB PASSWORD 'nokia920'")
+            cursor.execute(f"CREATE USER {db_conf["user"]} WITH PASSWORD 'nokia920'")
+            cursor.execute("""
+                SELECT rolcreatedb as can_create_db FROM pg_roles WHERE rolname = %s""", db_conf['user'])
             print('Пользователь "xomma" создан')
+            if not cursor.fetchone()[0]:
+                cursor.execute(f"ALTER USER {db_conf['user']} WITH CREATEDB")
+                print(f'Пользователю {db_conf["user"]} выдано право CREATEDB')
         else:
-            cursor.execute("ALTER USER xomma WITH CREATEDB")
-            print('Пользователю "xomma" выдано право CREATEDB')
-            # cursor.execute("GRANT ALL PRIVILEGES ON DATABASE education TO xomma")
-            # print('Права на базу данных "education" выданы пользователю "xomma"')
+            cursor.execute(f"ALTER USER {db_conf["user"]} WITH CREATEDB")
+            print(f'Пользователю {db_conf["user"]} выдано право CREATEDB')
 
             cursor.close()
             connection.close()
@@ -64,26 +60,6 @@ def create_user_if_not_exists():
         print(f'Не удалось создать пользователя: {e}')
 
 
-def grant_shema_priviliges():
-    db_cofig = {
-        'host': 'localhost',
-        'port': 5432,
-        'user': 'xomma',
-        'password': 'nokia920',
-        'database': 'education'
-    }
-
-    connection = psycopg2.connect(**db_cofig)
-    connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor = connection.cursor()
-
-    cursor.execute("GRANT ALL ON SCHEMA public TO xomma")
-    print('Права на схему "public" выданы пользователю "xomma"')
-
-    cursor.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO xomma")
-
-
 if __name__ == '__main__':
     create_user_if_not_exists()
     create_database()
-    # grant_shema_priviliges()

@@ -1,6 +1,6 @@
 import os
 import yadisk
-from app.settings import MEDIA_ROOT
+from settings import TOKEN, REMOTE_MEDIA_PATH, LOCAL_MEDIA_PATH
 
 
 def upload_recurcive(ya, remote_path, local_path):
@@ -23,10 +23,7 @@ def upload_recurcive(ya, remote_path, local_path):
 
 
 def upload_media():
-    TOKEN = 'y0__xDy68rUARjblgMg-4fl_xRBDTuFF7oXhhaIUdxaNLOLXULbjQ'
-    REMOTE_MEDIA_PATH = '/HMparts_media'
-    LOCAL_MEDIA_PATH = MEDIA_ROOT
-
+    print('Выгрузка медиафайлов на Яндекс.Диск')
     try:
         ya = yadisk.YaDisk(token=TOKEN)
         if not ya.check_token():
