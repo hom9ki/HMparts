@@ -1,15 +1,23 @@
 from rest_framework import serializers
 
-from cart.models import Cart
+from cart.models import CartItem
 
 
-class CartSerializer(serializers.ModelSerializer):
-    product_id = serializers.IntegerField(source="product.id", read_only=True)
+class CartItemSerializer(serializers.ModelSerializer):
+    """
+    Отвечает за 1 пункт корзины 1 человека:
+    - создание позиции
+    - инкремент количества
+    - декремент количества
+    - удаление товара из корзины
+    """
+
+    product_id = serializers.IntegerField(source="product.id", read_only=True)  # а зачем, если все равно передаешь product целиком?
     product_price = serializers.SerializerMethodField()
     total_price = serializers.SerializerMethodField()
 
     class Meta:
-        model = Cart
+        model = CartItem
         fields = (
             "id",
             "user",
@@ -49,13 +57,13 @@ class CartSerializer(serializers.ModelSerializer):
                     "quantity": quantity,
                 }
 
-            cart = Cart.objects.get(**lookup_kwargs)
+            cart = CartItem.objects.get(**lookup_kwargs)
 
             cart.quantity += quantity
             if cart.quantity <= 0:
                 print(f"Serializer < 0:{cart.quantity}")
                 cart.delete()
-                return Cart(
+                return CartItem(
                     id=None,
                     product=product,
                     quantity=0,
@@ -69,12 +77,24 @@ class CartSerializer(serializers.ModelSerializer):
                 cart.save()
                 return cart
 
-        except Cart.DoesNotExist:
+        except CartItem.DoesNotExist:
             if quantity > 0:
-                return Cart.objects.create(**create_kwargs)
+                return CartItem.objects.create(**create_kwargs)
 
     def get_total_price(self, obj):
         return obj.product_price()
 
     def get_product_price(self, obj):
         return obj.product.price
+
+
+class CartSerializer(serializers.Serializer):
+    """
+    отвечает за присвоение корзины пользователю, анонимному и не очень
+    - под этот сериализатор реализовываем апи-вью с методом PUT
+    - создает сессию, если ее нет
+    - передает полностью всегда ВСЮ корзину, не важно какое было действие - это поможет избежать расхождений между фронтом и бэком, а также дергать всегда только 1 метод апи на все действия
+    """
+    items = CartItemSerializer(many=True)
+    user_id = serializers.IntegerField()
+    session_key = serializers.CharField(max_length=32)

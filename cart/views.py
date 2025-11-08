@@ -1,8 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
-
+from django.shortcuts import get_object_or_404, redirect, render
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+
 from cart.models import Cart
 from cart.serializers import CartSerializer
 from product.models import Product
@@ -34,16 +34,18 @@ def cart_add(request, product_slug):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['DELETE'])
+@api_view(["DELETE"])
 def cart_remove(request, product_slug):
-    if request.method == 'DELETE':
+    if request.method == "DELETE":
         if request.user.is_authenticated:
             cart = Cart.objects.get(user=request.user, product__slug=product_slug)
         else:
-            cart = Cart.objects.get(session_key=request.session.session_key, product__slug=product_slug)
+            cart = Cart.objects.get(
+                session_key=request.session.session_key, product__slug=product_slug
+            )
         cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -56,9 +58,9 @@ def cart_detail(request):
     try:
         carts = Cart.objects.filter(user=request.user)
     except Exception as e:
-        print(f'Error: {e}')
+        print(f"Error: {e}")
         carts = None
     if carts:
-        return render(request, 'user_cart.html', {'cart_items': carts})
+        return render(request, "user_cart.html", {"cart_items": carts})
     else:
-        return render(request, 'user_cart.html', {'carts': None})
+        return render(request, "user_cart.html", {"carts": None})

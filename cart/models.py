@@ -25,7 +25,7 @@ class CartItemsManager(models.Manager):
 
 
 # CartItem я бы назвал, у тебя больше на такую логику похоже
-class Cart(models.Model):
+class CartItem(models.Model):
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
