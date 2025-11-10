@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-__69oc+hli$m_kk$%xiqo%27mm=q8-rk)+)a@10+4&sz&i*g9h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'nginx', 'web']
 
 # Application definition
 
@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'education',
         'USER': 'xomma',
         'PASSWORD': 'nokia920',
-        'HOST': 'localhost',
+        'HOST': 'postgres',
         'PORT': '5432',
     }
 }
@@ -130,7 +130,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static', ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = '/var/www/static/'
 
 THUMBNAIL_ALIASES = {
     '': {
@@ -142,7 +142,7 @@ THUMBNAIL_ALIASES = {
 }
 THUMBNAIL_BASEDIR = 'thumbnails'
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = '/var/www/media/'
 MEDIA_URL = '/media/'
 
 # Default primary key field type
