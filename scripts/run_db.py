@@ -9,11 +9,9 @@ def run_init_db():
     print(project_dir)
 
     scripts = [
-        'scripts/init_database.py',
         'scripts/test_encoding.py',
         ['manage.py', 'migrate'],
         'scripts/init_dump.py',
-        'scripts/download_media.py',
     ]
 
     for script in scripts:

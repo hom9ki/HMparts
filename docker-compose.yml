@@ -3,8 +3,8 @@ services:
     image: nginx
     volumes:
       - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - media-data:/var/www/media
-      - static-data:/var/www/static
+      - ./media:/var/www/media
+      - ./static:/var/www/static
     ports:
       - "8000:80"
     depends_on:
@@ -28,10 +28,13 @@ services:
         condition: service_healthy
     command: >
       sh -c "python manage.py collectstatic --noinput && 
-      python manage.py migrate && 
+      python manage.py migrate &&
+      python /app/scripts/run_db.py &&
       gunicorn app.wsgi:application --bind 0.0.0.0:8000"
     networks:
       - net
+
+
 
 
   postgres:
@@ -44,7 +47,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U xomma -d education"]
+      test: [ "CMD-SHELL", "pg_isready -U xomma -d education" ]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AutoParts - Магазин автотоваров{% endblock %}</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="{% static 'master.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
@@ -13,7 +15,34 @@
 
 
     {% block extra_css %}{% endblock %}
+    <style>
+        @media (max-width: 992px) {
+            .navbar-collapse .d-flex {
+                flex-direction: column;
+                width: 100%;
+            }
 
+            .navbar-collapse .d-flex form {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .navbar-collapse .d-flex .btn {
+                margin: 5px 0;
+            }
+        }
+
+        /* Для мобильных устройств */
+        @media (max-width: 768px) {
+            .navbar-collapse .d-flex form {
+                min-width: auto;
+            }
+
+            .input-group {
+                width: 100%;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -287,32 +316,4 @@
 
 {% block extra_js %}{% endblock %}
 </body>
-<style>
-    @media (max-width: 992px) {
-        .navbar-collapse .d-flex {
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .navbar-collapse .d-flex form {
-            width: 100%;
-            margin: 10px 0;
-        }
-
-        .navbar-collapse .d-flex .btn {
-            margin: 5px 0;
-        }
-    }
-
-    /* Для мобильных устройств */
-    @media (max-width: 768px) {
-        .navbar-collapse .d-flex form {
-            min-width: auto;
-        }
-
-        .input-group {
-            width: 100%;
-        }
-    }
-</style>
 </html>
