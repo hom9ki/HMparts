@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from .utilities import get_image_filename_category, get_image_filename_product, get_image_filename_set
 from garage.models import Model
+from .mixins import CatalogMixin
 
 
 class CategoryManager(models.Manager):
@@ -12,7 +13,7 @@ class CategoryManager(models.Manager):
         return supercategories
 
     def subcategories(self):
-        return self.filter(is_superccategory=False)
+        return self.filter(is_supercategory=False)
 
     def supercategories_with_subcategories(self):
         return self.supercategories().prefetch_related('subcategories')
@@ -62,7 +63,7 @@ class SubCategory(Category):
         if self.super_category:
             return f'{self.super_category.name} - {self.name}'
         else:
-            return f' {self.name} - {self.name}'
+            return f'{self.name}'
 
     class Meta:
         proxy = True
@@ -71,7 +72,7 @@ class SubCategory(Category):
         verbose_name_plural = 'Подкатегории'
 
 
-class Product(models.Model):
+class Product(models.Model, CatalogMixin):
     """Модель товара"""
     category = models.ForeignKey(SubCategory, on_delete=models.PROTECT, verbose_name='Категория',
                                  related_name='products')
@@ -157,7 +158,7 @@ class HitSet(HitBase):
         ordering = ['-created_at']
 
 
-class Set(models.Model):
+class Set(models.Model, CatalogMixin):
     """Модель комплекта товаров"""
     products = models.ManyToManyField(Product, through='SetProduct', verbose_name='Товары', related_name='sets')
     name = models.CharField(max_length=100, verbose_name='Название сета')

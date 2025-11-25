@@ -40,7 +40,6 @@ def product_card(request, slug):
                                                                               'additionalimage_set',
                                                                               'applicability__model').get(slug=slug)
         main_avto = Garage.objects.get(user=request.user)
-
         has_descriptions = product.descriptions.all().exists()
         has_reviews = product.product_reviews.all().exists()
         has_questions = product.product_questions.all().exists()
@@ -54,13 +53,13 @@ def product_card(request, slug):
             print(f'Error: {e}')
             has_common = False
             main_avto = None
-        return render(request, 'product_card.html', {'product': product,
-                                                     'has_descriptions': has_descriptions,
-                                                     'has_reviews': has_reviews,
-                                                     'has_questions': has_questions,
-                                                     'has_set': has_set,
-                                                     'has_common': has_common,
-                                                     'main_avto': main_avto})
+        return render(request, 'card.html', {'product': product,
+                                             'has_descriptions': has_descriptions,
+                                             'has_reviews': has_reviews,
+                                             'has_questions': has_questions,
+                                             'has_set': has_set,
+                                             'has_common': has_common,
+                                             'main_avto': main_avto})
     else:
         product = Product.objects.select_related('category').prefetch_related('descriptions',
                                                                               'product_reviews',
@@ -71,12 +70,12 @@ def product_card(request, slug):
         has_reviews = product.product_reviews.all().exists()
         has_questions = product.product_questions.all().exists()
         has_set = product.sets.all().exists()
-        return render(request, 'product_card.html', {'product': product,
-                                                     'has_descriptions': has_descriptions,
-                                                     'has_reviews': has_reviews,
-                                                     'has_questions': has_questions,
-                                                     'has_set': has_set,
-                                                     })
+        return render(request, 'card.html', {'product': product,
+                                             'has_descriptions': has_descriptions,
+                                             'has_reviews': has_reviews,
+                                             'has_questions': has_questions,
+                                             'has_set': has_set,
+                                             })
 
 
 def subcategory(request, slug):
@@ -91,7 +90,7 @@ def category(request, slug=None):
     if slug:
         subcategory = get_object_or_404(SubCategory, slug=slug)
         products = Product.objects.filter(category=subcategory).order_by('title')
-        return render(request, 'product_list.html', {'products': products, 'subcategory': subcategory})
+        return render(request, 'mini_card.html', {'products': products, 'subcategory': subcategory})
     else:
         all_categories = Category.objects.filter(Q(super_category=None) |
                                                  Q(is_supercategory=False, super_category=None)).order_by('name')
@@ -105,7 +104,7 @@ def category_detail(request, slug):
         return render(request, 'subcategory_list.html', {'subcategories': subcategory})
     else:
         products = Product.objects.filter(category=category).order_by('title')
-        return render(request, 'product_list.html', {'products': products})
+        return render(request, 'mini_card.html', {'products': products})
 
 
 def set_all(request):
@@ -136,7 +135,7 @@ def product_list(request):
     page = request.GET.get('page', 1)
     content = p.get_page(page)
 
-    return render(request, 'product_list.html', {'products': content})
+    return render(request, 'mini_card.html', {'products': content})
 
 
 @api_view()

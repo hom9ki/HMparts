@@ -1,0 +1,125 @@
+{%extends 'product_card.html'%}
+{%load static%}
+
+
+{%block product_detail%}
+
+<div class="card product-detail-card border-0 shadow">
+    <div class="row g-0">
+        <!-- Изображение и галерея -->
+        <div class="col-md-6">
+            <div class="h-100">
+                <!-- Основное изображение с возможностью увеличения -->
+                <div class="main-image-container position-relative bg-light p-3 rounded"
+                     style="min-height: 300px;">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}"
+                         class="img-fluid object-fit-contain modal-image main-product-image"
+                         alt="{{ product.title }}"
+                         style="max-height: 250px; cursor: zoom-in; width: 100%;"
+                         data-image-type="main">
+
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <i class="fas fa-image fa-4x text-muted"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Галерея дополнительных изображений -->
+                {% if product.additionalimage_set.all %}
+                <div class="p-3 border-top">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-images me-2"></i>Дополнительные изображения
+                    </h6>
+                    <div class="row g-2">
+                        {% for image in product.additionalimage_set.all %}
+                        <div class="col-3 col-sm-2">
+                            <img src="{{ image.image.url }}"
+                                 class="img-thumbnail modal-image w-100"
+                                 alt="Изображение {{ forloop.counter }} {{ product.title }}"
+                                 style="height: 60px; object-fit: cover; cursor: pointer;"
+                                 data-image-type="gallery">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Информация -->
+        <div class="col-md-6">
+            <div class="card-body h-100 d-flex flex-column">
+                <h1 class="h4 card-title">{{ product.title }}</h1>
+                <p class="text-muted">{{ product.category.name }}</p>
+
+                <div class="mb-3">
+                    <span class="h3 text-primary">{{ product.price }} ₽</span>
+                    {% if product.quantity > 0 %}
+                    <span class="badge bg-success ms-2">В наличии</span>
+                    {% else %}
+                    <span class="badge bg-danger ms-2">Нет в наличии</span>
+                    {% endif %}
+                    {% if has_common %}
+                    <span class="badge bg-info ms-2">Подходит к основному авто {{main_avto}}</span>
+                    {% else %}
+                    <span class="badge bg-secondary ms-2">Не подходит к основному авто</span>
+                    {% endif %}
+                </div>
+
+                <!-- Общая информация -->
+                <div class="general-info mb-3">
+                    <h6 class="fw-bold">Общая информация:</h6>
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <small class="text-muted">Артикул:</small>
+                            <br>
+                            <strong>{{ product.sku }}</strong>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <small class="text-muted">Категория:</small>
+                            <br>
+                            <strong>{{ product.category.name }}</strong>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <small class="text-muted">Наличие:</small>
+                            <br>
+                            <strong>
+                                {% if product.quantity > 0 %}
+                                {{ product.quantity }} шт.
+                                {% else %}
+                                Нет в наличии
+                                {% endif %}
+                            </strong>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <small class="text-muted">Дата добавления:</small>
+                            <br>
+                            <strong>{{ product.created_at|date:"d.m.Y" }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 ">
+                    {% if product.quantity > 0 %}
+                    <button class="btn btn-primary btn-lg">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Добавить в корзину
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline-secondary btn-lg" disabled>
+                        <i class="fas fa-times me-2"></i>
+                        Нет в наличии
+                    </button>
+                    {% endif %}
+                    <button class="btn btn-outline-secondary">
+                        <i class="far fa-heart me-2"></i>
+                        В избранное
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

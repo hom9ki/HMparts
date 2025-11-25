@@ -18,82 +18,8 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
             {% for product in products %}
             <div class="col">
-                <div class="card h-100 shadow-sm position-relative">
-                    <!-- Ссылка на товар -->
-                    <a href="{% url 'product:product_card' product.slug %}" class="stretched-link"></a>
-
-                    <!-- Изображение товара -->
-                    <div class="product-image-container" style="height: 200px; overflow: hidden;">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}"
-                             class="card-img-top h-100 object-fit-cover"
-                             alt="{{ product.title }}"
-                             loading="lazy">
-                        {% else %}
-                        <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
-                            <i class="fas fa-image fa-2x"></i>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Тело карточки -->
-                    <div class="card-body">
-                        <h6 class="card-title text-dark mb-2">
-                            {{ product.title|truncatewords:4 }}
-                        </h6>
-
-                        {% if product.content %}
-                        <p class="card-text text-muted small mb-2">
-                            {{ product.content|truncatewords:8 }}
-                        </p>
-                        {% endif %}
-
-                        <!-- Цена и рейтинг -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-primary fw-bold">{{ product.price }} ₽</span>
-                            <small class="text-muted">
-                                <i class="fas fa-star text-warning"></i>
-                                4.8
-                            </small>
-                        </div>
-
-                        <!-- Кнопки добавления/убавления товара -->
-                        <div class="cart-controls">
-                            {% if product.quantity > 0 %}
-                            <div class="d-flex align-items-center justify-content-between">
-                                <button class="btn btn-outline-danger btn-sm decrease-btn"
-                                        data-product-id="{{ product.id }}"
-                                        title="Убрать из корзины">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-
-                                <span class="quantity-badge mx-2 px-2 py-1 bg-light rounded">
-                                    <span id="quantity-{{ product.id }}">0</span> шт.
-                                </span>
-
-                                <button class="btn btn-outline-success btn-sm increase-btn"
-                                        data-product-id="{{ product.id }}"
-                                        title="Добавить в корзину">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            {% else %}
-                            <button class="btn btn-outline-secondary btn-sm w-100" disabled>
-                                <i class="fas fa-times me-1"></i>
-                                Нет в наличии
-                            </button>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- Футер карточки -->
-                    <div class="card-footer bg-transparent border-0 pt-0">
-                        <small class="text-muted">
-                            <i class="fas fa-box me-1"></i>
-                            В наличии: {{ product.quantity }} шт.
-                        </small>
-                    </div>
-                </div>
+                {%block mini_card%}
+                {%endblock%}
             </div>
             {% empty %}
             <div class="col-12">

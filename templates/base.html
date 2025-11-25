@@ -69,8 +69,7 @@
                             <button class="nav-link dropdown-toggle"
                                     id="categoriesDropdown"
                                     role="button"
-                                    data-bs-toggle="dropdown"
-                                    onclick="window.location.href='{% url 'product:category_all' %}'">
+                                    data-bs-toggle="dropdown">
                                 Категории
                             </button>
                             <ul class="dropdown-menu">
@@ -96,10 +95,12 @@
                                 <li><a class="dropdown-item" href="#">Нет категорий</a></li>
                                 {% endfor %}
                                 <hr class="dropdown-divider">
-                                <li><a class="dropdown-item text-primary" href="{% url 'product:product_list' %}">Все
-                                    товары</a></li>
+                                <li><a class="dropdown-item text-primary" href="{% url 'product:category_all' %}">Все
+                                    Категории</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'product:product_list'%}">Все товары</a>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'product:set_all'%}">Комплекты</a>
                         </li>
@@ -128,22 +129,6 @@
                         </li>
                         {% endif %}
                     </ul>
-
-                    <!-- Поисковая строка -->
-                    <form class="d-flex me-2" method="get" action="{% url 'product:search' %}"
-                          style="min-width: 250px;">
-                        <div class="input-group">
-                            <input type="text"
-                                   name="q"
-                                   class="form-control"
-                                   placeholder="Поиск товаров и комплектов..."
-                                   aria-label="Поиск"
-                                   value="{{ request.GET.q }}">
-                            <button class="btn btn-outline-light" type="submit">
-                                <i class="fas fa-search">Поиск</i>
-                            </button>
-                        </div>
-                    </form>
 
                     <!-- Поиск и действия пользователя -->
                     <div class="d-flex align-items-center">

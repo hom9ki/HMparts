@@ -99,9 +99,13 @@
                     <div class="card-body">
                         <h6 class="card-title text-dark mb-2">
                             {% if hit.product %}
-                            {{ hit.product.title|truncatewords:4 }}
+                            <h6 class="card-title text-dark mb-2">
+                                {{ hit.product.title|truncatewords:4 }}
+                            </h6>
                             {% elif hit.set_object %}
-                            {{ hit.set_object.name|truncatewords:4 }}
+                            <h6 class="card-title text-dark mb-2">
+                                {{ hit.set_object.name|truncatewords:4 }}
+                            </h6>
                             {% endif %}
                         </h6>
 
@@ -128,6 +132,60 @@
                                 <i class="fas fa-shopping-cart me-1"></i>
                                 {{ hit.sales_count }}
                             </small>
+                        </div>
+                        <!-- Кнопки добавления/убавления товара -->
+                        <div class="cart-controls">
+                            {% if hit.product %}
+                            {% if hit.product.quantity > 0 %}
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button class="btn btn-outline-danger btn-sm decrease-btn"
+                                        data-product-id="{{ hit.product.id }}"
+                                        title="Убрать из корзины">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+
+                                <span class="quantity-badge mx-2 px-2 py-1 bg-light rounded">
+                                        <span id="quantity-{{ hit.product.id }}">0</span> шт.
+                                    </span>
+
+                                <button class="btn btn-outline-success btn-sm increase-btn"
+                                        data-product-id="{{ hit.product.id }}"
+                                        title="Добавить в корзину">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            {% else %}
+                            <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                <i class="fas fa-times me-1"></i>
+                                Нет в наличии
+                            </button>
+                            {% endif %}
+                            {% else %}
+                            {% if hit.set_object.quantity > 0 %}
+                            <div class="d-flex align-items-center justify-content-between">
+                                <button class="btn btn-outline-danger btn-sm decrease-btn"
+                                        data-product-id="{{ hit.set_object.id }}"
+                                        title="Убрать из корзины">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+
+                                <span class="quantity-badge mx-2 px-2 py-1 bg-light rounded">
+                                            <span id="quantity-{{ hit.set_object.id }}">0</span> шт.
+                                        </span>
+
+                                <button class="btn btn-outline-success btn-sm increase-btn"
+                                        data-product-id="{{ hit.set_object.id }}"
+                                        title="Добавить в корзину">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            {% else %}
+                            <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                                <i class="fas fa-times me-1"></i>
+                                Нет в наличии
+                            </button>
+                            {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -188,6 +246,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/cart_add.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.querySelector('input[name="q"]');
