@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+# import dotenv
+#
+# dotenv.load_dotenv()
 
 from django.conf.global_settings import LOGGING
 
@@ -27,6 +32,11 @@ SECRET_KEY = 'django-insecure-__69oc+hli$m_kk$%xiqo%27mm=q8-rk)+)a@10+4&sz&i*g9h
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'nginx', 'web']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 
 # Application definition
 
@@ -90,10 +100,10 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'education',
-        'USER': 'xomma',
-        'PASSWORD': 'nokia920',
-        'HOST': 'postgres',
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
         'PORT': '5432',
     }
 }
